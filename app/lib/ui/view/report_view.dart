@@ -168,14 +168,17 @@ class _ReportViewState extends State<ReportView> {
                 child: SizedBox(
                   width: double.infinity,
                   child: CupertinoButton(
-                    color: CupertinoColors.activeBlue,
-                    disabledColor: CupertinoColors.activeBlue.withValues(
+                    color: CupertinoColors.systemRed,
+                    disabledColor: CupertinoColors.systemRed.withValues(
                       alpha: 0.4,
                     ),
                     onPressed: _selectedCategory == null ? null : _onSubmit,
                     child: const Text(
                       '신고하기',
-                      style: TextStyle(color: CupertinoColors.white),
+                      style: TextStyle(
+                        color: CupertinoColors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

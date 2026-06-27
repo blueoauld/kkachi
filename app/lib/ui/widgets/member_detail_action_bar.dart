@@ -47,7 +47,7 @@ class MemberDetailActionBar extends StatelessWidget {
               ),
             ),
           ),
-              child: SafeArea(
+          child: SafeArea(
             top: false,
             maintainBottomViewPadding: true,
             child: SizedBox(
