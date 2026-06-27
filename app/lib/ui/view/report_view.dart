@@ -138,45 +138,49 @@ class _ReportViewState extends State<ReportView> {
       navigationBar: CupertinoNavigationBar(
         middle: Text('신고하기 (${widget.nickname})'),
       ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionLabel(context, '카테고리'),
+                      _buildCategoryList(context),
+                      const SizedBox(height: 24),
+                      _buildSectionLabel(context, '증거 사진'),
+                      _buildImageAttach(context),
+                      const SizedBox(height: 24),
+                      _buildSectionLabel(context, '상세 내용'),
+                      _buildReasonField(context),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionLabel(context, '카테고리'),
-                    _buildCategoryList(context),
-                    const SizedBox(height: 24),
-                    _buildSectionLabel(context, '증거 사진'),
-                    _buildImageAttach(context),
-                    const SizedBox(height: 24),
-                    _buildSectionLabel(context, '상세 내용'),
-                    _buildReasonField(context),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: SizedBox(
-                width: double.infinity,
-                child: CupertinoButton(
-                  color: CupertinoColors.activeBlue,
-                  disabledColor: CupertinoColors.activeBlue.withValues(
-                    alpha: 0.4,
-                  ),
-                  onPressed: _selectedCategory == null ? null : _onSubmit,
-                  child: const Text(
-                    '신고하기',
-                    style: TextStyle(color: CupertinoColors.white),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: CupertinoButton(
+                    color: CupertinoColors.activeBlue,
+                    disabledColor: CupertinoColors.activeBlue.withValues(
+                      alpha: 0.4,
+                    ),
+                    onPressed: _selectedCategory == null ? null : _onSubmit,
+                    child: const Text(
+                      '신고하기',
+                      style: TextStyle(color: CupertinoColors.white),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

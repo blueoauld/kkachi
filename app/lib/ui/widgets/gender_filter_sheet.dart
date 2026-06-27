@@ -13,7 +13,6 @@ class GenderFilterSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoActionSheet(
-      title: const Text('성별 필터'),
       actions: [
         _genderAction(context, '전체'),
         _genderAction(context, '남자'),

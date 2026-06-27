@@ -21,7 +21,8 @@ const _mockMemberDetail = MemberDetail(
   gender: '여자',
   age: 27,
   distance: 1.2,
-  bio: '안녕하세요! 사진 찍는 거 좋아하고 주말엔 등산 다녀요. 편하게 대화해요 :)',
+  bio:
+      '안녕하세요! 사진 찍는 거 좋아하고 주말엔 등산 다녀요. 편하게 대화해요 :) 안녕하세요! 사진 찍는 거 좋아하고 주말엔 등산 다녀요. 편하게 대화해요 : 안녕하세요! 사진 찍는 거 좋아하고 주말엔 등산 다녀요. 편하게 대화해요 : 안녕하세요! 사진 찍는 거 좋아하고 주말엔 등산 다녀요. 편하게 대화해요 : 안녕하세요! 사진 찍는 거 좋아하고 주말엔 등산 다녀요. 편하게 대화해요 :  안녕하세요! 사진 찍는 거 좋아하고 주말엔 등산 다녀요. 편하게 대화해요 : 안녕하세요! 사진 찍는 거 좋아하고 주말엔 등산 다녀요. 편하게 대화해요 :',
   hearts: 128,
 );
 
@@ -167,6 +168,7 @@ class _MemberDetailViewState extends State<MemberDetailView> {
     );
 
     return CupertinoPageScaffold(
+      resizeToAvoidBottomInset: false,
       navigationBar: CupertinoNavigationBar(
         middle: const Text('프로필'),
         trailing: AppIconButton(
