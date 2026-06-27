@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'model/member.dart';
 import 'ui/home/home_page.dart';
+import 'ui/view/chat_search_view.dart';
 import 'ui/view/chat_view.dart';
 import 'ui/view/main_view.dart';
 import 'ui/view/member_detail_view.dart';
@@ -68,6 +69,13 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: AppRoutes.chat,
               builder: (context, state) => const ChatView(),
+              routes: [
+                GoRoute(
+                  path: AppRoutes.search,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => const ChatSearchView(),
+                ),
+              ],
             ),
           ],
         ),
