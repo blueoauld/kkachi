@@ -1,4 +1,5 @@
 import 'package:app/model/member.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 
 class MemberListTile extends StatelessWidget {
@@ -11,14 +12,28 @@ class MemberListTile extends StatelessWidget {
     const size = 64.0;
     final url = member.profileUrl;
 
-    final placeholder = Container(
+    Widget buildFill(Widget child) => Container(
       width: size,
       height: size,
       alignment: Alignment.center,
       color: CupertinoColors.systemGrey5.resolveFrom(context),
-      child: Icon(
+      child: child,
+    );
+
+    final placeholder = buildFill(
+      Icon(
         CupertinoIcons.person_fill,
         size: 32,
+        color: CupertinoColors.systemGrey.resolveFrom(context),
+      ),
+    );
+
+    final loading = buildFill(const CupertinoActivityIndicator(radius: 10));
+
+    final error = buildFill(
+      Icon(
+        CupertinoIcons.xmark,
+        size: 24,
         color: CupertinoColors.systemGrey.resolveFrom(context),
       ),
     );
@@ -27,12 +42,13 @@ class MemberListTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: (url == null || url.isEmpty)
           ? placeholder
-          : Image.network(
-              url,
+          : CachedNetworkImage(
+              imageUrl: url,
               width: size,
               height: size,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => placeholder,
+              placeholder: (_, _) => loading,
+              errorWidget: (_, _, _) => error,
             ),
     );
   }

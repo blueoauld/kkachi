@@ -3,6 +3,7 @@ import 'package:app/model/member_detail.dart';
 import 'package:app/ui/widgets/app_icon_button.dart';
 import 'package:app/ui/widgets/member_detail_action_bar.dart';
 import 'package:app/ui/widgets/member_detail_menu_sheet.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 
 const _mockMemberDetail = MemberDetail(
@@ -45,12 +46,26 @@ class _MemberDetailViewState extends State<MemberDetailView> {
   Widget _buildImageTabView(BuildContext context) {
     final images = _detail.publicImageUrls;
 
-    final placeholder = Container(
+    Widget buildFill(Widget child) => Container(
       color: CupertinoColors.systemGrey5.resolveFrom(context),
       alignment: Alignment.center,
-      child: Icon(
+      child: child,
+    );
+
+    final placeholder = buildFill(
+      Icon(
         CupertinoIcons.person_fill,
         size: 96,
+        color: CupertinoColors.systemGrey.resolveFrom(context),
+      ),
+    );
+
+    final loading = buildFill(const CupertinoActivityIndicator(radius: 16));
+
+    final error = buildFill(
+      Icon(
+        CupertinoIcons.xmark,
+        size: 64,
         color: CupertinoColors.systemGrey.resolveFrom(context),
       ),
     );
@@ -65,10 +80,11 @@ class _MemberDetailViewState extends State<MemberDetailView> {
             onPageChanged: (index) => setState(() => _currentPage = index),
             itemBuilder: (context, index) {
               if (images.isEmpty) return placeholder;
-              return Image.network(
-                images[index],
+              return CachedNetworkImage(
+                imageUrl: images[index],
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => placeholder,
+                placeholder: (_, _) => loading,
+                errorWidget: (_, _, _) => error,
               );
             },
           ),
