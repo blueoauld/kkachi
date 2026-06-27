@@ -1,20 +1,21 @@
 import 'package:app/model/member.dart';
-import 'package:app/ui/view/member_detail_view.dart';
-import 'package:app/ui/widgets/communication_app_bar.dart';
+import 'package:app/router.dart';
 import 'package:app/ui/widgets/compose_post_dialog.dart';
 import 'package:app/ui/widgets/gender_filter_sheet.dart';
 import 'package:app/ui/widgets/location_filter_bar.dart';
+import 'package:app/ui/widgets/main_app_bar.dart';
 import 'package:app/ui/widgets/member_list.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 
-class CommunicationView extends StatefulWidget {
-  const CommunicationView({super.key});
+class MainView extends StatefulWidget {
+  const MainView({super.key});
 
   @override
-  State<CommunicationView> createState() => _CommunicationViewState();
+  State<MainView> createState() => _MainViewState();
 }
 
-class _CommunicationViewState extends State<CommunicationView> {
+class _MainViewState extends State<MainView> {
   int _segment = 0;
 
   static const List<Member> _members = [
@@ -66,7 +67,7 @@ class _CommunicationViewState extends State<CommunicationView> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: CommunicationAppBar(
+      navigationBar: MainAppBar(
         onSearch: () {},
         onFilter: () => GenderFilterSheet.show(context),
         onCompose: () => _handleCompose(context),
@@ -82,10 +83,9 @@ class _CommunicationViewState extends State<CommunicationView> {
               child: MemberList(
                 members: _members,
                 onRefresh: _handleRefresh,
-                onTapMember: (member) => Navigator.of(context).push(
-                  CupertinoPageRoute<void>(
-                    builder: (_) => MemberDetailView(member: member),
-                  ),
+                onTapMember: (member) => context.push(
+                  '${AppRoutes.main}/${AppRoutes.member}',
+                  extra: member,
                 ),
               ),
             ),

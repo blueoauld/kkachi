@@ -1,9 +1,9 @@
 import 'package:app/ui/widgets/app_icon_button.dart';
 import 'package:flutter/cupertino.dart';
 
-class CommunicationAppBar extends StatelessWidget
+class MainAppBar extends StatelessWidget
     implements ObstructingPreferredSizeWidget {
-  const CommunicationAppBar({
+  const MainAppBar({
     super.key,
     required this.onSearch,
     required this.onFilter,
@@ -17,7 +17,7 @@ class CommunicationAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return CupertinoNavigationBar(
-      middle: const Text('소통'),
+      middle: const Text('메인'),
       leading: AppIconButton(icon: CupertinoIcons.search, onPressed: onSearch),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
