@@ -1,16 +1,220 @@
 import 'package:app/model/member.dart';
+import 'package:app/model/member_detail.dart';
+import 'package:app/ui/widgets/app_icon_button.dart';
+import 'package:app/ui/widgets/member_detail_action_bar.dart';
+import 'package:app/ui/widgets/member_detail_menu_sheet.dart';
 import 'package:flutter/cupertino.dart';
 
-class MemberDetailView extends StatelessWidget {
+const _mockMemberDetail = MemberDetail(
+  publicImageUrls: [
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800',
+    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=800',
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800',
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800',
+  ],
+  privateImageCount: 0,
+  nickname: '홍길동',
+  updatedAt: '방금전',
+  gender: '여자',
+  age: 27,
+  distance: 1.2,
+  bio: '안녕하세요! 사진 찍는 거 좋아하고 주말엔 등산 다녀요. 편하게 대화해요 :)',
+  hearts: 128,
+);
+
+class MemberDetailView extends StatefulWidget {
   const MemberDetailView({super.key, required this.member});
 
   final Member member;
 
   @override
+  State<MemberDetailView> createState() => _MemberDetailViewState();
+}
+
+class _MemberDetailViewState extends State<MemberDetailView> {
+  final MemberDetail _detail = _mockMemberDetail;
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildImageTabView(BuildContext context) {
+    final images = _detail.publicImageUrls;
+
+    final placeholder = Container(
+      color: CupertinoColors.systemGrey5.resolveFrom(context),
+      alignment: Alignment.center,
+      child: Icon(
+        CupertinoIcons.person_fill,
+        size: 96,
+        color: CupertinoColors.systemGrey.resolveFrom(context),
+      ),
+    );
+
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: images.isEmpty ? 1 : images.length,
+            onPageChanged: (index) => setState(() => _currentPage = index),
+            itemBuilder: (context, index) {
+              if (images.isEmpty) return placeholder;
+              return Image.network(
+                images[index],
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => placeholder,
+              );
+            },
+          ),
+          if (images.length > 1)
+            Positioned(
+              bottom: 12,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(images.length, (index) {
+                  final isActive = index == _currentPage;
+                  return Container(
+                    width: 8,
+                    height: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isActive
+                          ? CupertinoColors.white
+                          : CupertinoColors.white.withValues(alpha: 0.4),
+                    ),
+                  );
+                }),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final secondaryColor = CupertinoDynamicColor.resolve(
+      CupertinoColors.secondaryLabel,
+      context,
+    );
+
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(middle: Text(member.nickname)),
-      child: const Center(child: Text('Hello World')),
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('프로필'),
+        trailing: AppIconButton(
+          icon: CupertinoIcons.ellipsis,
+          onPressed: () => MemberDetailMenuSheet.show(context),
+        ),
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            child: SafeArea(
+              bottom: false,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildImageTabView(context),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _detail.nickname,
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _detail.updatedAt,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: secondaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              Text(
+                                '${_detail.gender} · ${_detail.age}살 · ',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: secondaryColor,
+                                ),
+                              ),
+                              Icon(
+                                CupertinoIcons.heart_fill,
+                                size: 15,
+                                color: CupertinoColors.systemRed.resolveFrom(
+                                  context,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${_detail.hearts}',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: secondaryColor,
+                                ),
+                              ),
+                              const Spacer(),
+                              if (_detail.distance != null)
+                                Text(
+                                  '${_detail.distance!.toStringAsFixed(1)}km',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: secondaryColor,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: CupertinoColors.systemGrey6.resolveFrom(
+                                context,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              _detail.bio,
+                              style: const TextStyle(fontSize: 16, height: 1.4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          MemberDetailActionBar(privateImageCount: _detail.privateImageCount),
+        ],
+      ),
     );
   }
 }
