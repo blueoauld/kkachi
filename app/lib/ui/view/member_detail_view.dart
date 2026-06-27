@@ -138,7 +138,8 @@ class _MemberDetailViewState extends State<MemberDetailView> {
         middle: const Text('프로필'),
         trailing: AppIconButton(
           icon: CupertinoIcons.ellipsis,
-          onPressed: () => MemberDetailMenuSheet.show(context),
+          onPressed: () =>
+              MemberDetailMenuSheet.show(context, nickname: _detail.nickname),
         ),
       ),
       child: Column(

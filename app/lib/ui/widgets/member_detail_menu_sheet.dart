@@ -1,12 +1,17 @@
 import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../router.dart';
 
 class MemberDetailMenuSheet extends StatelessWidget {
-  const MemberDetailMenuSheet({super.key});
+  const MemberDetailMenuSheet({super.key, required this.nickname});
 
-  static Future<void> show(BuildContext context) {
+  final String nickname;
+
+  static Future<void> show(BuildContext context, {required String nickname}) {
     return showCupertinoModalPopup<void>(
       context: context,
-      builder: (context) => const MemberDetailMenuSheet(),
+      builder: (context) => MemberDetailMenuSheet(nickname: nickname),
     );
   }
 
@@ -16,7 +21,13 @@ class MemberDetailMenuSheet extends StatelessWidget {
       actions: [
         CupertinoActionSheetAction(
           isDestructiveAction: true,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+            context.push(
+              '${AppRoutes.main}/${AppRoutes.member}/${AppRoutes.report}',
+              extra: nickname,
+            );
+          },
           child: const Text('신고하기'),
         ),
         CupertinoActionSheetAction(

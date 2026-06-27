@@ -8,6 +8,7 @@ import 'ui/view/main_view.dart';
 import 'ui/view/member_detail_view.dart';
 import 'ui/view/profile_view.dart';
 import 'ui/view/ranking_view.dart';
+import 'ui/view/report_view.dart';
 
 /// 앱 라우트 경로 모음.
 abstract final class AppRoutes {
@@ -16,6 +17,7 @@ abstract final class AppRoutes {
   static const ranking = '/ranking';
   static const profile = '/profile';
   static const member = 'member';
+  static const report = 'report';
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -41,6 +43,14 @@ final GoRouter appRouter = GoRouter(
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) =>
                       MemberDetailView(member: state.extra! as Member),
+                  routes: [
+                    GoRoute(
+                      path: AppRoutes.report,
+                      parentNavigatorKey: _rootNavigatorKey,
+                      builder: (context, state) =>
+                          ReportView(nickname: state.extra! as String),
+                    ),
+                  ],
                 ),
               ],
             ),
