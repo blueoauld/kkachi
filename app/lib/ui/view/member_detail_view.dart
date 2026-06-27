@@ -4,6 +4,7 @@ import 'package:app/ui/view/photo_gallery_view.dart';
 import 'package:app/ui/widgets/app_icon_button.dart';
 import 'package:app/ui/widgets/member_detail_action_bar.dart';
 import 'package:app/ui/widgets/member_detail_menu_sheet.dart';
+import 'package:app/ui/widgets/message_compose_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -56,7 +57,7 @@ class _MemberDetailViewState extends State<MemberDetailView> {
         actions: [
           CupertinoDialogAction(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소'),
+            child: const Text('닫기'),
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
@@ -70,6 +71,10 @@ class _MemberDetailViewState extends State<MemberDetailView> {
     if (confirmed == true && context.mounted) {
       Navigator.of(context).pop();
     }
+  }
+
+  Future<void> _handleMessage(BuildContext context) async {
+    await MessageComposeSheet.show(context);
   }
 
   Widget _buildImageTabView(BuildContext context) {
@@ -269,6 +274,7 @@ class _MemberDetailViewState extends State<MemberDetailView> {
           ),
           MemberDetailActionBar(
             privateImageCount: _detail.privateImageCount,
+            onMessage: () => _handleMessage(context),
             onBlock: () => _handleBlock(context),
           ),
         ],
