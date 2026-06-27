@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shimmer/shimmer.dart';
 
-/// 순위별 닉네임 반짝임(하이라이트) 색상. (1: 금, 2: 은, 3: 동)
+/// 순위별 행 배경 반짝임 색상. (1: 금, 2: 은, 3: 동)
 const _rankShimmerColors = <int, Color>{
   1: Color(0xFFFFD700),
   2: Color(0xFFC0C0C0),
@@ -21,7 +21,7 @@ class MemberListTile extends StatelessWidget {
   final Member member;
   final VoidCallback? onTap;
 
-  /// 순위. 1~3등이면 닉네임에 금/은/동 색 반짝임 효과를 준다.
+  /// 순위. 1~3등이면 행 배경에 금/은/동 색 반짝임 효과를 준다.
   final int? rank;
 
   Widget _buildProfile(BuildContext context) {
@@ -77,9 +77,8 @@ class MemberListTile extends StatelessWidget {
     );
 
     final shimmerColor = rank == null ? null : _rankShimmerColors[rank];
-    final labelColor = CupertinoColors.label.resolveFrom(context);
 
-    return CupertinoButton(
+    final tile = CupertinoButton(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       onPressed: onTap,
       child: Row(
@@ -95,24 +94,12 @@ class MemberListTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Builder(
-                        builder: (context) {
-                          final nickname = Text(
-                            member.nickname,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: labelColor,
-                            ),
-                          );
-                          if (shimmerColor == null) return nickname;
-                          return Shimmer.fromColors(
-                            baseColor: labelColor,
-                            highlightColor: shimmerColor,
-                            period: const Duration(milliseconds: 3200),
-                            child: nickname,
-                          );
-                        },
+                      child: Text(
+                        member.nickname,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     Text(
@@ -166,6 +153,23 @@ class MemberListTile extends StatelessWidget {
           ),
         ],
       ),
+    );
+
+    if (shimmerColor == null) return tile;
+
+    // 1~3등은 행 배경에 순위색 shimmer 밴드가 지나가게 한다.
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Shimmer.fromColors(
+            baseColor: shimmerColor.withValues(alpha: 0),
+            highlightColor: shimmerColor.withValues(alpha: 0.35),
+            period: const Duration(milliseconds: 3000),
+            child: const ColoredBox(color: Color(0xFFFFFFFF)),
+          ),
+        ),
+        tile,
+      ],
     );
   }
 }
