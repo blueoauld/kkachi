@@ -136,6 +136,7 @@ class _ReportViewState extends State<ReportView> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemBackground,
         middle: Text('신고하기 (${widget.nickname})'),
       ),
       child: GestureDetector(

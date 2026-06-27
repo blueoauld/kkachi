@@ -6,7 +6,10 @@ class RankingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(middle: Text('랭킹')),
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemBackground,
+        middle: Text('랭킹'),
+      ),
       child: Center(child: Text('랭킹 화면', style: TextStyle(fontSize: 28))),
     );
   }

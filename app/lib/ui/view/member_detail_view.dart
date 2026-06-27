@@ -170,6 +170,7 @@ class _MemberDetailViewState extends State<MemberDetailView> {
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
       navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemBackground,
         middle: const Text('프로필'),
         trailing: AppIconButton(
           icon: CupertinoIcons.ellipsis,

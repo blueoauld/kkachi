@@ -16,23 +16,25 @@ class MemberList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        CupertinoSliverRefreshControl(onRefresh: onRefresh),
-        SliverPadding(
-          padding: const EdgeInsets.only(bottom: 12),
-          sliver: SliverList.builder(
-            itemCount: members.length,
-            itemBuilder: (context, index) {
-              final member = members[index];
-              return MemberListTile(
-                member: member,
-                onTap: () => onTapMember?.call(member),
-              );
-            },
+    return CupertinoScrollbar(
+      child: CustomScrollView(
+        slivers: [
+          CupertinoSliverRefreshControl(onRefresh: onRefresh),
+          SliverPadding(
+            padding: const EdgeInsets.only(bottom: 12),
+            sliver: SliverList.builder(
+              itemCount: members.length,
+              itemBuilder: (context, index) {
+                final member = members[index];
+                return MemberListTile(
+                  member: member,
+                  onTap: () => onTapMember?.call(member),
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

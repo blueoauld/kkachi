@@ -6,7 +6,10 @@ class ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(middle: Text('채팅')),
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemBackground,
+        middle: Text('채팅'),
+      ),
       child: Center(child: Text('채팅 화면', style: TextStyle(fontSize: 28))),
     );
   }

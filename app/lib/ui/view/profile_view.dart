@@ -6,7 +6,10 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(middle: Text('프로필')),
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemBackground,
+        middle: Text('프로필'),
+      ),
       child: Center(child: Text('프로필 화면', style: TextStyle(fontSize: 28))),
     );
   }

@@ -18,7 +18,7 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   int _segment = 0;
 
-  static final List<Member> _members = List<Member>.generate(100, (i) {
+  static final List<Member> _members = List<Member>.generate(10000, (i) {
     final n = i + 1;
     return Member(
       profileUrl: i % 5 == 4 ? null : 'https://picsum.photos/seed/$n/200',
