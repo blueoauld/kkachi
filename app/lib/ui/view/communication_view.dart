@@ -1,4 +1,5 @@
 import 'package:app/model/member.dart';
+import 'package:app/ui/view/member_detail_view.dart';
 import 'package:app/ui/widgets/communication_app_bar.dart';
 import 'package:app/ui/widgets/compose_post_dialog.dart';
 import 'package:app/ui/widgets/gender_filter_sheet.dart';
@@ -81,7 +82,11 @@ class _CommunicationViewState extends State<CommunicationView> {
               child: MemberList(
                 members: _members,
                 onRefresh: _handleRefresh,
-                onTapMember: (member) {},
+                onTapMember: (member) => Navigator.of(context).push(
+                  CupertinoPageRoute<void>(
+                    builder: (_) => MemberDetailView(member: member),
+                  ),
+                ),
               ),
             ),
           ],

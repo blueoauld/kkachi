@@ -39,10 +39,6 @@ class MemberListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelColor = CupertinoDynamicColor.resolve(
-      CupertinoColors.label,
-      context,
-    );
     final secondaryColor = CupertinoDynamicColor.resolve(
       CupertinoColors.secondaryLabel,
       context,
@@ -68,7 +64,6 @@ class MemberListTile extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: labelColor,
                         ),
                       ),
                     ),

@@ -14,11 +14,10 @@ class NavIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = CupertinoDynamicColor.resolve(CupertinoColors.label, context);
     return CupertinoButton(
       padding: EdgeInsets.zero,
       onPressed: onPressed,
-      child: Icon(icon, color: color, size: size),
+      child: Icon(icon, size: size),
     );
   }
 }

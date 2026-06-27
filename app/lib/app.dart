@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const CupertinoApp(
       title: '투투',
-      theme: CupertinoThemeData(primaryColor: CupertinoColors.activeBlue),
+      theme: CupertinoThemeData(primaryColor: CupertinoColors.label),
       home: HomePage(),
     );
   }

@@ -11,9 +11,7 @@ class CommunicationAppBar extends StatelessWidget
   });
 
   final VoidCallback onSearch;
-
   final VoidCallback onFilter;
-
   final VoidCallback onCompose;
 
   @override
