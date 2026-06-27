@@ -49,7 +49,7 @@ class _MainViewState extends State<MainView> {
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
       navigationBar: MainAppBar(
-        onSearch: () {},
+        onSearch: () => context.push('${AppRoutes.main}/${AppRoutes.search}'),
         onFilter: () => GenderFilterSheet.show(context),
         onCompose: () => _handleCompose(context),
       ),

@@ -6,6 +6,7 @@ import 'ui/home/home_page.dart';
 import 'ui/view/chat_view.dart';
 import 'ui/view/main_view.dart';
 import 'ui/view/member_detail_view.dart';
+import 'ui/view/member_search_view.dart';
 import 'ui/view/profile_view.dart';
 import 'ui/view/ranking_view.dart';
 import 'ui/view/report_view.dart';
@@ -18,6 +19,7 @@ abstract final class AppRoutes {
   static const profile = '/profile';
   static const member = 'member';
   static const report = 'report';
+  static const search = 'search';
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -38,6 +40,11 @@ final GoRouter appRouter = GoRouter(
               path: AppRoutes.main,
               builder: (context, state) => const MainView(),
               routes: [
+                GoRoute(
+                  path: AppRoutes.search,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => const MemberSearchView(),
+                ),
                 GoRoute(
                   path: AppRoutes.member,
                   parentNavigatorKey: _rootNavigatorKey,
