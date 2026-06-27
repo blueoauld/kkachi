@@ -21,7 +21,10 @@ class MemberList extends StatelessWidget {
         slivers: [
           CupertinoSliverRefreshControl(onRefresh: onRefresh),
           SliverPadding(
-            padding: const EdgeInsets.only(bottom: 12),
+            // 하단 탭바(높이 60 + 안전영역) 뒤로 콘텐츠가 스크롤되도록 여백 확보.
+            padding: EdgeInsets.only(
+              bottom: 12 + 60 + MediaQuery.of(context).padding.bottom,
+            ),
             sliver: SliverList.builder(
               itemCount: members.length,
               itemBuilder: (context, index) {

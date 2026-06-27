@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
+const _kTabBarBackgroundColor = CupertinoDynamicColor.withBrightness(
+  color: Color(0x99F9F9F9),
+  darkColor: Color(0x991D1D1D),
+);
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.navigationShell});
 
@@ -19,44 +24,50 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
-      child: Column(
+      child: Stack(
         children: [
-          Expanded(child: navigationShell),
-          CupertinoTabBar(
-            activeColor: CupertinoColors.label,
-            height: 60,
-            currentIndex: navigationShell.currentIndex,
-            onTap: _onTap,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Icon(CupertinoIcons.flame_fill),
+          Positioned.fill(child: navigationShell),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: CupertinoTabBar(
+              backgroundColor: _kTabBarBackgroundColor,
+              activeColor: CupertinoColors.label,
+              height: 60,
+              currentIndex: navigationShell.currentIndex,
+              onTap: _onTap,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: EdgeInsets.only(top: 6),
+                    child: Icon(CupertinoIcons.flame_fill),
+                  ),
+                  label: '메인',
                 ),
-                label: '메인',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Icon(CupertinoIcons.chat_bubble_2_fill),
+                BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: EdgeInsets.only(top: 6),
+                    child: Icon(CupertinoIcons.chat_bubble_2_fill),
+                  ),
+                  label: '채팅',
                 ),
-                label: '채팅',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Icon(CupertinoIcons.star_fill),
+                BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: EdgeInsets.only(top: 6),
+                    child: Icon(CupertinoIcons.star_fill),
+                  ),
+                  label: '랭킹',
                 ),
-                label: '랭킹',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Icon(CupertinoIcons.person_fill),
+                BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: EdgeInsets.only(top: 6),
+                    child: Icon(CupertinoIcons.person_fill),
+                  ),
+                  label: '프로필',
                 ),
-                label: '프로필',
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

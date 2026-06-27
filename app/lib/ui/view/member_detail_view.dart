@@ -178,12 +178,15 @@ class _MemberDetailViewState extends State<MemberDetailView> {
               MemberDetailMenuSheet.show(context, nickname: _detail.nickname),
         ),
       ),
-      child: Column(
+      child: Stack(
         children: [
-          Expanded(
+          Positioned.fill(
             child: SafeArea(
               bottom: false,
               child: SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  bottom: 60 + MediaQuery.of(context).padding.bottom,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -275,10 +278,15 @@ class _MemberDetailViewState extends State<MemberDetailView> {
               ),
             ),
           ),
-          MemberDetailActionBar(
-            privateImageCount: _detail.privateImageCount,
-            onMessage: () => _handleMessage(context),
-            onBlock: () => _handleBlock(context),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: MemberDetailActionBar(
+              privateImageCount: _detail.privateImageCount,
+              onMessage: () => _handleMessage(context),
+              onBlock: () => _handleBlock(context),
+            ),
           ),
         ],
       ),

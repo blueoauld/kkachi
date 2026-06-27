@@ -1,8 +1,15 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/cupertino.dart';
 
 const _kTabBarBorderColor = CupertinoDynamicColor.withBrightness(
   color: Color(0x4C000000),
   darkColor: Color(0x29000000),
+);
+
+const _kBarBackgroundColor = CupertinoDynamicColor.withBrightness(
+  color: Color(0x99F9F9F9),
+  darkColor: Color(0x991D1D1D),
 );
 
 class MemberDetailActionBar extends StatelessWidget {
@@ -27,56 +34,61 @@ class MemberDetailActionBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = CupertinoColors.systemGrey.resolveFrom(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: CupertinoTheme.of(context).barBackgroundColor,
-        border: Border(
-          top: BorderSide(
-            color: _kTabBarBorderColor.resolveFrom(context),
-            width: 0,
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: _kBarBackgroundColor.resolveFrom(context),
+            border: Border(
+              top: BorderSide(
+                color: _kTabBarBorderColor.resolveFrom(context),
+                width: 0,
+              ),
+            ),
           ),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        maintainBottomViewPadding: true,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _ActionItem(
-                icon: CupertinoIcons.star_fill,
-                label: '즐겨찾기',
-                color: color,
-                onPressed: onFavorite,
+              child: SafeArea(
+            top: false,
+            maintainBottomViewPadding: true,
+            child: SizedBox(
+              height: 60,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _ActionItem(
+                    icon: CupertinoIcons.star_fill,
+                    label: '즐겨찾기',
+                    color: color,
+                    onPressed: onFavorite,
+                  ),
+                  _ActionItem(
+                    icon: CupertinoIcons.heart_fill,
+                    label: '좋아요',
+                    color: color,
+                    onPressed: onLike,
+                  ),
+                  _ActionItem(
+                    icon: CupertinoIcons.bubble_left_fill,
+                    label: '쪽지',
+                    color: color,
+                    onPressed: onMessage,
+                  ),
+                  _ActionItem(
+                    icon: CupertinoIcons.photo_fill,
+                    label: '비밀 사진',
+                    color: color,
+                    onPressed: onPhoto,
+                    badge: _CountBadge(count: privateImageCount),
+                  ),
+                  _ActionItem(
+                    icon: CupertinoIcons.nosign,
+                    label: '차단',
+                    color: color,
+                    onPressed: onBlock,
+                  ),
+                ],
               ),
-              _ActionItem(
-                icon: CupertinoIcons.heart_fill,
-                label: '좋아요',
-                color: color,
-                onPressed: onLike,
-              ),
-              _ActionItem(
-                icon: CupertinoIcons.bubble_left_fill,
-                label: '쪽지',
-                color: color,
-                onPressed: onMessage,
-              ),
-              _ActionItem(
-                icon: CupertinoIcons.photo_fill,
-                label: '비밀 사진',
-                color: color,
-                onPressed: onPhoto,
-                badge: _CountBadge(count: privateImageCount),
-              ),
-              _ActionItem(
-                icon: CupertinoIcons.nosign,
-                label: '차단',
-                color: color,
-                onPressed: onBlock,
-              ),
-            ],
+            ),
           ),
         ),
       ),
