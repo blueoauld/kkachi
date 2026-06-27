@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Icons;
 import 'package:go_router/go_router.dart';
 
 const _kTabBarBackgroundColor = CupertinoDynamicColor.withBrightness(
@@ -41,7 +42,7 @@ class HomePage extends StatelessWidget {
                 BottomNavigationBarItem(
                   icon: Padding(
                     padding: EdgeInsets.only(top: 6),
-                    child: Icon(CupertinoIcons.flame_fill),
+                    child: Icon(CupertinoIcons.house_fill),
                   ),
                   label: '메인',
                 ),
@@ -55,7 +56,7 @@ class HomePage extends StatelessWidget {
                 BottomNavigationBarItem(
                   icon: Padding(
                     padding: EdgeInsets.only(top: 6),
-                    child: Icon(CupertinoIcons.star_fill),
+                    child: Icon(Icons.emoji_events),
                   ),
                   label: '랭킹',
                 ),

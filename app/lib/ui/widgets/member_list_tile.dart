@@ -1,12 +1,28 @@
 import 'package:app/model/member.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shimmer/shimmer.dart';
+
+/// 순위별 닉네임 반짝임(하이라이트) 색상. (1: 금, 2: 은, 3: 동)
+const _rankShimmerColors = <int, Color>{
+  1: Color(0xFFFFD700),
+  2: Color(0xFFC0C0C0),
+  3: Color(0xFFCD7F32),
+};
 
 class MemberListTile extends StatelessWidget {
-  const MemberListTile({super.key, required this.member, this.onTap});
+  const MemberListTile({
+    super.key,
+    required this.member,
+    this.onTap,
+    this.rank,
+  });
 
   final Member member;
   final VoidCallback? onTap;
+
+  /// 순위. 1~3등이면 닉네임에 금/은/동 색 반짝임 효과를 준다.
+  final int? rank;
 
   Widget _buildProfile(BuildContext context) {
     const size = 64.0;
@@ -60,6 +76,9 @@ class MemberListTile extends StatelessWidget {
       context,
     );
 
+    final shimmerColor = rank == null ? null : _rankShimmerColors[rank];
+    final labelColor = CupertinoColors.label.resolveFrom(context);
+
     return CupertinoButton(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       onPressed: onTap,
@@ -76,12 +95,24 @@ class MemberListTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Text(
-                        member.nickname,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      child: Builder(
+                        builder: (context) {
+                          final nickname = Text(
+                            member.nickname,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: labelColor,
+                            ),
+                          );
+                          if (shimmerColor == null) return nickname;
+                          return Shimmer.fromColors(
+                            baseColor: labelColor,
+                            highlightColor: shimmerColor,
+                            period: const Duration(milliseconds: 3200),
+                            child: nickname,
+                          );
+                        },
                       ),
                     ),
                     Text(
