@@ -57,6 +57,7 @@ class MemberListTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
                       child: Text(
@@ -69,7 +70,7 @@ class MemberListTile extends StatelessWidget {
                     ),
                     Text(
                       member.updatedAt,
-                      style: TextStyle(fontSize: 12, color: secondaryColor),
+                      style: TextStyle(fontSize: 11, color: secondaryColor),
                     ),
                   ],
                 ),
@@ -78,7 +79,7 @@ class MemberListTile extends StatelessWidget {
                   children: [
                     Text(
                       '${member.gender} · ${member.age}살 · ',
-                      style: TextStyle(fontSize: 14, color: secondaryColor),
+                      style: TextStyle(fontSize: 13, color: secondaryColor),
                     ),
                     Icon(
                       CupertinoIcons.heart_fill,
@@ -88,7 +89,7 @@ class MemberListTile extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       '${member.hearts}',
-                      style: TextStyle(fontSize: 14, color: secondaryColor),
+                      style: TextStyle(fontSize: 13, color: secondaryColor),
                     ),
                   ],
                 ),
@@ -101,14 +102,14 @@ class MemberListTile extends StatelessWidget {
                         member.comment,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 14, color: secondaryColor),
+                        style: TextStyle(fontSize: 13, color: secondaryColor),
                       ),
                     ),
                     if (member.distance != null) ...[
                       const SizedBox(width: 8),
                       Text(
                         '${member.distance!.toStringAsFixed(1)}km',
-                        style: TextStyle(fontSize: 12, color: secondaryColor),
+                        style: TextStyle(fontSize: 11, color: secondaryColor),
                       ),
                     ],
                   ],

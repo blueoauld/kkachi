@@ -131,7 +131,7 @@ class _MemberDetailViewState extends State<MemberDetailView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             textBaseline: TextBaseline.alphabetic,
                             children: [
                               Expanded(

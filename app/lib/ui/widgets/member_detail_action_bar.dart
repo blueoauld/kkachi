@@ -64,7 +64,7 @@ class MemberDetailActionBar extends StatelessWidget {
               ),
               _ActionItem(
                 icon: CupertinoIcons.photo_fill,
-                label: '비밀사진',
+                label: '비밀 사진',
                 color: color,
                 onPressed: onPhoto,
                 badge: _CountBadge(count: privateImageCount),
