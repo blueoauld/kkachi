@@ -1,5 +1,6 @@
 import 'package:app/model/member.dart';
 import 'package:app/model/member_detail.dart';
+import 'package:app/ui/view/photo_gallery_view.dart';
 import 'package:app/ui/widgets/app_icon_button.dart';
 import 'package:app/ui/widgets/member_detail_action_bar.dart';
 import 'package:app/ui/widgets/member_detail_menu_sheet.dart';
@@ -74,20 +75,29 @@ class _MemberDetailViewState extends State<MemberDetailView> {
       aspectRatio: 1,
       child: Stack(
         children: [
-          PageView.builder(
-            controller: _pageController,
-            itemCount: images.isEmpty ? 1 : images.length,
-            onPageChanged: (index) => setState(() => _currentPage = index),
-            itemBuilder: (context, index) {
-              if (images.isEmpty) return placeholder;
-              return CachedNetworkImage(
-                imageUrl: images[index],
-                fit: BoxFit.cover,
-                placeholder: (_, _) => loading,
-                errorWidget: (_, _, _) => error,
-              );
-            },
-          ),
+          if (images.isEmpty)
+            placeholder
+          else
+            PageView.builder(
+              controller: _pageController,
+              itemCount: images.length,
+              onPageChanged: (index) => setState(() => _currentPage = index),
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () => PhotoGalleryView.show(
+                    context,
+                    images: images,
+                    initialIndex: index,
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: images[index],
+                    fit: BoxFit.cover,
+                    placeholder: (_, _) => loading,
+                    errorWidget: (_, _, _) => error,
+                  ),
+                );
+              },
+            ),
           if (images.length > 1)
             Positioned(
               bottom: 12,
