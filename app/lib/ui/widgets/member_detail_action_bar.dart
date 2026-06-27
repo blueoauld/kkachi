@@ -1,4 +1,3 @@
-import 'package:app/ui/widgets/app_icon_button.dart';
 import 'package:flutter/cupertino.dart';
 
 const _kTabBarBorderColor = CupertinoDynamicColor.withBrightness(
@@ -26,7 +25,7 @@ class MemberDetailActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = CupertinoColors.systemGrey.resolveFrom(context);
+    final color = CupertinoColors.systemGrey.resolveFrom(context);
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -43,42 +42,92 @@ class MemberDetailActionBar extends StatelessWidget {
         child: SizedBox(
           height: 60,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              AppIconButton(
+              _ActionItem(
                 icon: CupertinoIcons.star_fill,
-                color: iconColor,
-                onPressed: onFavorite ?? () {},
+                label: '즐겨찾기',
+                color: color,
+                onPressed: onFavorite,
               ),
-              AppIconButton(
+              _ActionItem(
                 icon: CupertinoIcons.heart_fill,
-                color: iconColor,
-                onPressed: onLike ?? () {},
+                label: '좋아요',
+                color: color,
+                onPressed: onLike,
               ),
-              AppIconButton(
+              _ActionItem(
                 icon: CupertinoIcons.bubble_left_fill,
-                color: iconColor,
-                onPressed: onMessage ?? () {},
+                label: '쪽지',
+                color: color,
+                onPressed: onMessage,
               ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  AppIconButton(
-                    icon: CupertinoIcons.photo_fill,
-                    color: iconColor,
-                    onPressed: onPhoto ?? () {},
-                  ),
-                  Positioned(
-                    top: 2,
-                    right: -2,
-                    child: _CountBadge(count: privateImageCount),
-                  ),
-                ],
+              _ActionItem(
+                icon: CupertinoIcons.photo_fill,
+                label: '비밀사진',
+                color: color,
+                onPressed: onPhoto,
+                badge: _CountBadge(count: privateImageCount),
               ),
-              AppIconButton(
+              _ActionItem(
                 icon: CupertinoIcons.nosign,
-                color: iconColor,
-                onPressed: onBlock ?? () {},
+                label: '차단',
+                color: color,
+                onPressed: onBlock,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionItem extends StatelessWidget {
+  const _ActionItem({
+    required this.icon,
+    required this.label,
+    required this.color,
+    this.onPressed,
+    this.badge,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onPressed;
+  final Widget? badge;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
+        minimumSize: Size.zero,
+        onPressed: onPressed ?? () {},
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(icon, size: 24, color: color),
+                        if (badge != null)
+                          Positioned(top: -4, right: -8, child: badge!),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                label,
+                style: TextStyle(fontSize: 10, color: color, height: 1),
               ),
             ],
           ),
@@ -96,21 +145,21 @@ class _CountBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: count > 0
             ? CupertinoColors.systemRed.resolveFrom(context)
             : CupertinoColors.systemGrey2.resolveFrom(context),
-        borderRadius: BorderRadius.circular(9),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         '$count',
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: CupertinoColors.white,
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: FontWeight.w600,
           height: 1,
         ),
