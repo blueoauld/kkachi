@@ -44,6 +44,34 @@ class _MemberDetailViewState extends State<MemberDetailView> {
     super.dispose();
   }
 
+  Future<void> _handleBlock(BuildContext context) async {
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text('${_detail.nickname}님을 차단할까요?'),
+        content: const Padding(
+          padding: EdgeInsets.only(top: 8),
+          child: Text('차단하면 대화 내역이 모두 삭제되며, 서로의 목록에서도 표시되지 않습니다.'),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('차단'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   Widget _buildImageTabView(BuildContext context) {
     final images = _detail.publicImageUrls;
 
@@ -239,7 +267,10 @@ class _MemberDetailViewState extends State<MemberDetailView> {
               ),
             ),
           ),
-          MemberDetailActionBar(privateImageCount: _detail.privateImageCount),
+          MemberDetailActionBar(
+            privateImageCount: _detail.privateImageCount,
+            onBlock: () => _handleBlock(context),
+          ),
         ],
       ),
     );
