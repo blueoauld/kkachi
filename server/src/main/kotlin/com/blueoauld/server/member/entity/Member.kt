@@ -6,6 +6,7 @@ import org.hibernate.annotations.SoftDelete
 import org.hibernate.annotations.SoftDeleteType
 import org.locationtech.jts.geom.Point
 import java.time.Instant
+import java.util.*
 
 @SoftDelete(columnName = "deleted_at", strategy = SoftDeleteType.TIMESTAMP)
 @Entity
@@ -22,14 +23,17 @@ class Member(
     private val phone: String,
 
     @Column(name = "nickname", length = 10, unique = true, nullable = false)
-    private val nickname: String,
+    private val nickname: String = "닉네임_" + UUID.randomUUID().toString().take(6),
+
+    @Column(name = "password", length = 100, nullable = false)
+    private val password: String,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
     private val gender: Gender,
 
     @Column(name = "birth_year", nullable = false)
-    private val birthYear: Int,
+    private val birthYear: Int = 2000,
 
     @Column(name = "bio", length = 1000, nullable = false)
     private val bio: String = "안녕하세요.",

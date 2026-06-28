@@ -2,11 +2,15 @@ package com.blueoauld.server.auth.application
 
 import com.blueoauld.server.auth.application.port.SmsSender
 import com.blueoauld.server.auth.application.request.SendVerificationCodeRequest
+import com.blueoauld.server.auth.application.request.SignupRequest
 import com.blueoauld.server.global.security.CodeGenerator
+import com.blueoauld.server.member.entity.Member
 import com.blueoauld.server.member.repository.MemberRepository
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.core.script.RedisScript
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
@@ -18,6 +22,7 @@ class AuthService(
     private val stringRedisTemplate: StringRedisTemplate,
     private val smsSender: SmsSender,
     private val codeGenerator: CodeGenerator,
+    private val passwordEncoder: PasswordEncoder,
 ) {
 
     companion object {
@@ -50,13 +55,47 @@ class AuthService(
 
         val verificationCode = codeGenerator.numeric(VERIFICATION_CODE_LENGTH)
         stringRedisTemplate.opsForValue().set(
-            "$VERIFICATION_CODE_KEY_PREFIX${request.phone}",
+            verificationCodeKey(request.phone),
             verificationCode,
             VERIFICATION_CODE_TTL
         )
 
         smsSender.send(request.phone, "[까치] 인증 번호는 [$verificationCode] 입니다.")
     }
+
+    @Transactional
+    fun signup(request: SignupRequest) {
+        verifyCode(request.phone, request.verificationCode)
+
+        require(request.password == request.passwordConfirm) {
+            "비밀번호가 일치하지 않습니다."
+        }
+        require(!memberRepository.existsByPhone(request.phone)) {
+            "이미 가입된 휴대폰 번호입니다."
+        }
+
+        val member = Member(
+            phone = request.phone,
+            password = passwordEncoder.encode(request.password)!!,
+            gender = request.gender,
+        )
+        memberRepository.save(member)
+
+        stringRedisTemplate.delete(verificationCodeKey(request.phone))
+    }
+
+    private fun verifyCode(phone: String, verificationCode: String) {
+        val savedCode = stringRedisTemplate.opsForValue().get(verificationCodeKey(phone))
+
+        requireNotNull(savedCode) {
+            "인증 번호가 만료되었거나 발송되지 않았습니다."
+        }
+        require(savedCode == verificationCode) {
+            "인증 번호가 일치하지 않습니다."
+        }
+    }
+
+    private fun verificationCodeKey(phone: String) = "$VERIFICATION_CODE_KEY_PREFIX$phone"
 
     private fun checkDailyLimit(phone: String) {
         val key = "$DAILY_SEND_COUNT_KEY_PREFIX${LocalDate.now(KST)}:$phone"
