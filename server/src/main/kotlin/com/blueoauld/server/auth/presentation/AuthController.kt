@@ -6,6 +6,7 @@ import com.blueoauld.server.auth.application.request.ReissueRequest
 import com.blueoauld.server.auth.application.request.SendVerificationCodeRequest
 import com.blueoauld.server.auth.application.request.SignupRequest
 import com.blueoauld.server.auth.application.response.LoginResponse
+import com.blueoauld.server.global.resolver.LoginMember
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -43,5 +44,11 @@ class AuthController(
     fun reissue(@Valid @RequestBody request: ReissueRequest): ResponseEntity<LoginResponse> {
         val response = authService.reissue(request)
         return ResponseEntity.ok(response)
+    }
+
+    @PostMapping("/v1/auth/logout")
+    fun logout(@LoginMember memberId: Long): ResponseEntity<Unit> {
+        authService.logout(memberId)
+        return ResponseEntity.ok().build()
     }
 }

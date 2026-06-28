@@ -121,6 +121,10 @@ class AuthService(
         return issueTokens(memberId)
     }
 
+    fun logout(memberId: Long) {
+        stringRedisTemplate.delete(refreshTokenKey(memberId))
+    }
+
     private fun issueTokens(memberId: Long): LoginResponse {
         val accessToken = jwtProvider.generateAccessToken(memberId)
         val refreshToken = jwtProvider.generateRefreshToken(memberId)
