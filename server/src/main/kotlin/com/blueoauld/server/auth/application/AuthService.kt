@@ -6,6 +6,7 @@ import com.blueoauld.server.auth.application.request.SignupRequest
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.security.CodeGenerator
+import com.blueoauld.server.global.security.PhoneHasher
 import com.blueoauld.server.member.entity.Member
 import com.blueoauld.server.member.repository.MemberRepository
 import org.springframework.data.redis.core.StringRedisTemplate
@@ -25,6 +26,7 @@ class AuthService(
     private val smsSender: SmsSender,
     private val codeGenerator: CodeGenerator,
     private val passwordEncoder: PasswordEncoder,
+    private val phoneHasher: PhoneHasher,
 ) {
 
     companion object {
@@ -67,7 +69,7 @@ class AuthService(
 
     @Transactional
     fun signup(request: SignupRequest) {
-        verifyCode(request.phone, request.verificationCode)
+        validateVerificationCode(request.phone, request.verificationCode)
 
         if (request.password != request.passwordConfirm) {
             throw BusinessException(ErrorCode.PASSWORD_CONFIRM_MISMATCH)
@@ -86,7 +88,7 @@ class AuthService(
         stringRedisTemplate.delete(verificationCodeKey(request.phone))
     }
 
-    private fun verifyCode(phone: String, verificationCode: String) {
+    private fun validateVerificationCode(phone: String, verificationCode: String) {
         val savedCode = stringRedisTemplate.opsForValue().get(verificationCodeKey(phone))
             ?: throw BusinessException(ErrorCode.VERIFICATION_CODE_NOT_FOUND)
 
@@ -95,10 +97,10 @@ class AuthService(
         }
     }
 
-    private fun verificationCodeKey(phone: String) = "$VERIFICATION_CODE_KEY_PREFIX$phone"
+    private fun verificationCodeKey(phone: String) = "$VERIFICATION_CODE_KEY_PREFIX${phoneHasher.hash(phone)}"
 
     private fun checkDailyLimit(phone: String) {
-        val key = "$DAILY_SEND_COUNT_KEY_PREFIX${LocalDate.now(KST)}:$phone"
+        val key = "$DAILY_SEND_COUNT_KEY_PREFIX${LocalDate.now(KST)}:${phoneHasher.hash(phone)}"
         val count = stringRedisTemplate.execute(
             DAILY_SEND_COUNT_SCRIPT,
             listOf(key),

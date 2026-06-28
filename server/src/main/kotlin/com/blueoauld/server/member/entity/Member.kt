@@ -1,5 +1,6 @@
 package com.blueoauld.server.member.entity
 
+import com.blueoauld.server.global.security.PhoneAttributeConverter
 import com.blueoauld.server.member.entity.type.Gender
 import jakarta.persistence.*
 import org.hibernate.annotations.SoftDelete
@@ -19,7 +20,8 @@ class Member(
     @Column(name = "profile_url")
     private val profileUrl: String? = null,
 
-    @Column(name = "phone", length = 11, unique = true, nullable = false)
+    @Convert(converter = PhoneAttributeConverter::class)
+    @Column(name = "phone", length = 100, unique = true, nullable = false)
     private val phone: String,
 
     @Column(name = "nickname", length = 10, unique = true, nullable = false)

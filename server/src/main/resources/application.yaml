@@ -21,3 +21,7 @@ spring:
       port: 6379
       host: localhost
       password:
+
+app:
+  crypto:
+    secret-key: ${APP_CRYPTO_SECRET_KEY:local-dev-secret-key}
