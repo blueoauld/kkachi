@@ -2,6 +2,7 @@ package com.blueoauld.server.auth.application
 
 import com.blueoauld.server.auth.application.port.SmsSender
 import com.blueoauld.server.auth.application.request.LoginRequest
+import com.blueoauld.server.auth.application.request.ReissueRequest
 import com.blueoauld.server.auth.application.request.SendVerificationCodeRequest
 import com.blueoauld.server.auth.application.request.SignupRequest
 import com.blueoauld.server.auth.application.response.LoginResponse
@@ -12,6 +13,7 @@ import com.blueoauld.server.global.security.CodeGenerator
 import com.blueoauld.server.global.security.PhoneHasher
 import com.blueoauld.server.member.entity.Member
 import com.blueoauld.server.member.repository.MemberRepository
+import io.jsonwebtoken.JwtException
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.core.script.RedisScript
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -101,17 +103,37 @@ class AuthService(
             throw BusinessException(ErrorCode.LOGIN_FAILED)
         }
 
-        val accessToken = jwtProvider.generateAccessToken(member.id)
-        val refreshToken = jwtProvider.generateRefreshToken(member.id)
+        return issueTokens(member.id)
+    }
+
+    fun reissue(request: ReissueRequest): LoginResponse {
+        val memberId = try {
+            jwtProvider.getMemberId(request.refreshToken)
+        } catch (_: JwtException) {
+            throw BusinessException(ErrorCode.INVALID_REFRESH_TOKEN)
+        }
+
+        val storedRefreshToken = stringRedisTemplate.opsForValue().get(refreshTokenKey(memberId))
+        if (storedRefreshToken != request.refreshToken) {
+            throw BusinessException(ErrorCode.INVALID_REFRESH_TOKEN)
+        }
+
+        return issueTokens(memberId)
+    }
+
+    private fun issueTokens(memberId: Long): LoginResponse {
+        val accessToken = jwtProvider.generateAccessToken(memberId)
+        val refreshToken = jwtProvider.generateRefreshToken(memberId)
 
         stringRedisTemplate.opsForValue().set(
-            "$REFRESH_TOKEN_KEY_PREFIX${member.id}",
+            refreshTokenKey(memberId),
             refreshToken,
             Duration.ofMillis(jwtProvider.refreshTokenExpiration),
         )
-
         return LoginResponse(accessToken, refreshToken)
     }
+
+    private fun refreshTokenKey(memberId: Long) = "$REFRESH_TOKEN_KEY_PREFIX$memberId"
 
     private fun validateVerificationCode(phone: String, verificationCode: String) {
         val savedCode = stringRedisTemplate.opsForValue().get(verificationCodeKey(phone))
