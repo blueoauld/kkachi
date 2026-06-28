@@ -60,6 +60,7 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         middle: Text('로그인'),
       ),

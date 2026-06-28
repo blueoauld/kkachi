@@ -173,6 +173,7 @@ class _SignUpViewState extends State<SignUpView> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         middle: Text('회원가입'),
       ),

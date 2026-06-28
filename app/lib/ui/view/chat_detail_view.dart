@@ -118,6 +118,7 @@ class _ChatDetailViewState extends State<ChatDetailView>
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         // 헤더 내부 패딩. 좌/우 기본값(16), 하단만 8 (상단은 0 — 고정 높이라 찌부 방지).
         padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 5),

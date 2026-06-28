@@ -55,6 +55,7 @@ class _ChatSearchViewState extends State<ChatSearchView> {
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
       navigationBar: const CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         middle: Text('채팅 검색'),
       ),

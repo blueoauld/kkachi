@@ -1,10 +1,10 @@
 import 'package:app/model/member.dart';
 import 'package:app/model/member_detail.dart';
+import 'package:app/ui/adaptive/adaptive_confirm_dialog.dart';
 import 'package:app/ui/view/photo_gallery_view.dart';
 import 'package:app/ui/widgets/app_icon_button.dart';
 import 'package:app/ui/widgets/member_detail_action_bar.dart';
 import 'package:app/ui/widgets/member_detail_menu_sheet.dart';
-import 'package:app/ui/adaptive/adaptive_confirm_dialog.dart';
 import 'package:app/ui/widgets/message_compose_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -157,6 +157,7 @@ class _MemberDetailViewState extends State<MemberDetailView> {
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
       navigationBar: CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         middle: const Text('프로필'),
         trailing: AppIconButton(

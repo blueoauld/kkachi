@@ -40,6 +40,7 @@ class _LikeListViewState extends State<LikeListView> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         middle: Text('좋아요 목록'),
       ),

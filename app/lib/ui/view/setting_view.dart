@@ -125,6 +125,7 @@ class SettingView extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: backgroundColor,
       navigationBar: CupertinoNavigationBar(
+        border: null,
         backgroundColor: backgroundColor,
         middle: const Text('설정'),
         trailing: AppIconButton(

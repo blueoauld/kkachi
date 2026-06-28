@@ -15,6 +15,7 @@ class ChatAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return CupertinoNavigationBar(
+      border: null,
       backgroundColor: CupertinoColors.systemBackground,
       middle: const Text('채팅'),
       leading: AppIconButton(icon: CupertinoIcons.search, onPressed: onSearch),

@@ -123,6 +123,7 @@ class _ProfileSetupViewState extends State<ProfileSetupView> {
       canPop: false,
       child: CupertinoPageScaffold(
         navigationBar: const CupertinoNavigationBar(
+          border: null,
           backgroundColor: CupertinoColors.systemBackground,
           automaticallyImplyLeading: false,
           middle: Text('프로필 설정'),

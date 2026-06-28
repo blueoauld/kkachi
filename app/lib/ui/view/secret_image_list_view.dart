@@ -40,6 +40,7 @@ class _SecretImageListViewState extends State<SecretImageListView> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         middle: Text('비밀 사진 목록'),
       ),

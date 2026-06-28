@@ -1,34 +1,24 @@
 import 'package:flutter/cupertino.dart';
 
-class SettingMenuSheet extends StatelessWidget {
-  const SettingMenuSheet({super.key});
+import '../adaptive/adaptive_action_sheet.dart';
+
+/// 설정 화면 우상단 메뉴.
+///
+/// iOS는 액션 시트, Android는 Material 바텀시트로 분기한다.
+class SettingMenuSheet {
+  const SettingMenuSheet._();
 
   static Future<void> show(BuildContext context) {
-    return showCupertinoModalPopup<void>(
-      context: context,
-      builder: (context) => const SettingMenuSheet(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoActionSheet(
+    return AdaptiveActionSheet.show(
+      context,
       actions: [
-        CupertinoActionSheetAction(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('로그아웃'),
-        ),
-        CupertinoActionSheetAction(
-          isDestructiveAction: true,
-          onPressed: () => Navigator.pop(context),
-          child: const Text('회원탈퇴'),
+        AdaptiveActionSheetAction(label: '로그아웃', onPressed: () {}),
+        AdaptiveActionSheetAction(
+          label: '회원탈퇴',
+          isDestructive: true,
+          onPressed: () {},
         ),
       ],
-      cancelButton: CupertinoActionSheetAction(
-        isDefaultAction: true,
-        onPressed: () => Navigator.pop(context),
-        child: const Text('닫기'),
-      ),
     );
   }
 }

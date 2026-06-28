@@ -18,6 +18,7 @@ class MainAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     return CupertinoNavigationBar(
       backgroundColor: CupertinoColors.systemBackground,
+      border: null,
       middle: const Text('메인'),
       leading: AppIconButton(icon: CupertinoIcons.search, onPressed: onSearch),
       trailing: Row(

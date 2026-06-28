@@ -31,6 +31,7 @@ class PointHistoryView extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: backgroundColor,
       navigationBar: CupertinoNavigationBar(
+        border: null,
         backgroundColor: backgroundColor,
         middle: const Text('포인트 내역'),
       ),

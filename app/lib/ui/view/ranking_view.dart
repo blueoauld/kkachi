@@ -35,6 +35,7 @@ class _RankingViewState extends State<RankingView> {
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
       navigationBar: const CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         middle: Text('랭킹'),
       ),

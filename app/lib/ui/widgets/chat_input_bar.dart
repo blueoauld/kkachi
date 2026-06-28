@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/cupertino.dart';
 
 /// 하단 입력 바. 길쭉한 캡슐 안에 왼쪽 + 버튼, 오른쪽 전송 버튼을 둔다.
@@ -28,6 +30,7 @@ class ChatInputBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
+          // 버튼은 하단 고정. 입력이 여러 줄로 늘어나도 + / 전송은 맨 아래에 머문다.
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             // 왼쪽 + 버튼 (입력창과 구분되는 회색 원).
@@ -62,7 +65,11 @@ class ChatInputBar extends StatelessWidget {
                   autocorrect: false,
                   enableSuggestions: false,
                   placeholder: '메시지 입력',
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  // Android는 폰트 패딩으로 한 줄 높이가 커져 버튼보다 높아진다.
+                  // 세로 패딩을 줄여 한 줄 높이를 버튼(36) 이하로 맞춰 상하 여백을 대칭으로 만든다.
+                  padding: EdgeInsets.symmetric(
+                    vertical: Platform.isAndroid ? 4 : 8,
+                  ),
                   decoration: const BoxDecoration(),
                   onSubmitted: (_) => onSend(),
                 ),

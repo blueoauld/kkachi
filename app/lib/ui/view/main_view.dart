@@ -23,7 +23,7 @@ class _MainViewState extends State<MainView> {
     return Member(
       profileUrl: i % 5 == 4 ? null : 'https://picsum.photos/seed/$n/200',
       nickname: '닉네임$n',
-      updatedAt: '${n}분 전',
+      updatedAt: '$n분 전',
       gender: i.isEven ? '여자' : '남자',
       age: 20 + (i % 30),
       distance: i % 7 == 0 ? null : (i % 100) / 10 + 0.1,

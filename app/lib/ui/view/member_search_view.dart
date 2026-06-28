@@ -62,6 +62,7 @@ class _MemberSearchViewState extends State<MemberSearchView> {
     return CupertinoPageScaffold(
       resizeToAvoidBottomInset: false,
       navigationBar: const CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         middle: Text('회원 검색'),
       ),

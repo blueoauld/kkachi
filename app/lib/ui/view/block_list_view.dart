@@ -40,6 +40,7 @@ class _BlockListViewState extends State<BlockListView> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
+        border: null,
         backgroundColor: CupertinoColors.systemBackground,
         middle: Text('차단 목록'),
       ),
