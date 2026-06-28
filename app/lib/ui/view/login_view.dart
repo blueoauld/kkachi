@@ -43,7 +43,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void _onSignUp() {
-    // TODO: 회원가입 화면 연동
+    context.push(AppRoutes.signup);
   }
 
   Widget _buildField(BuildContext context, {required Widget child}) {
@@ -68,7 +68,7 @@ class _LoginViewState extends State<LoginView> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -78,9 +78,10 @@ class _LoginViewState extends State<LoginView> {
                   child: CupertinoTextField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
-                    placeholder: '휴대폰 번호',
+                    placeholder: '휴대폰',
                     padding: const EdgeInsets.all(14),
                     decoration: const BoxDecoration(),
+                    clearButtonMode: OverlayVisibilityMode.editing,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -92,6 +93,7 @@ class _LoginViewState extends State<LoginView> {
                     placeholder: '비밀번호',
                     padding: const EdgeInsets.all(14),
                     decoration: const BoxDecoration(),
+                    clearButtonMode: OverlayVisibilityMode.editing,
                   ),
                 ),
                 const SizedBox(height: 16),

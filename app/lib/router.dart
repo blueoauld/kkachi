@@ -18,10 +18,12 @@ import 'ui/view/ranking_view.dart';
 import 'ui/view/report_view.dart';
 import 'ui/view/secret_image_list_view.dart';
 import 'ui/view/setting_view.dart';
+import 'ui/view/signup_view.dart';
 
 /// 앱 라우트 경로 모음.
 abstract final class AppRoutes {
   static const login = '/login';
+  static const signup = '/signup';
   static const main = '/main';
   static const chat = '/chat';
   static const ranking = '/ranking';
@@ -47,6 +49,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.login,
       builder: (context, state) => const LoginView(),
+    ),
+    GoRoute(
+      path: AppRoutes.signup,
+      builder: (context, state) => const SignUpView(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
