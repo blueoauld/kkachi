@@ -1,7 +1,7 @@
 package com.blueoauld.server.member.entity
 
 import com.blueoauld.server.global.security.PhoneAttributeConverter
-import com.blueoauld.server.member.entity.type.Gender
+import com.blueoauld.server.member.entity.type.GenderType
 import jakarta.persistence.*
 import org.hibernate.annotations.SoftDelete
 import org.hibernate.annotations.SoftDeleteType
@@ -18,9 +18,6 @@ class Member(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @Column(name = "profile_url")
-    private val profileUrl: String? = null,
-
     @Convert(converter = PhoneAttributeConverter::class)
     @Column(name = "phone", length = 100, unique = true, nullable = false)
     private val phone: String,
@@ -33,7 +30,7 @@ class Member(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
-    private val gender: Gender,
+    private val gender: GenderType,
 
     @Column(name = "birth_year", nullable = false)
     private val birthYear: Int = 2000,
@@ -55,7 +52,7 @@ class Member(
 ) {
 
     fun matchesPassword(rawPassword: String, passwordEncoder: PasswordEncoder): Boolean =
-        passwordEncoder.matches(rawPassword, password)
+        passwordEncoder.matches(rawPassword, this.password)
 
     @PrePersist
     fun onCreate() {

@@ -1,6 +1,6 @@
 package com.blueoauld.server.auth.application.request
 
-import com.blueoauld.server.member.entity.type.Gender
+import com.blueoauld.server.member.entity.type.GenderType
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
@@ -21,5 +21,5 @@ data class SignupRequest(
     val passwordConfirm: String,
 
     @field:NotNull(message = "성별은 필수입니다.")
-    var gender: Gender,
+    var gender: GenderType,
 )

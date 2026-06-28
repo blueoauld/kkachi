@@ -1,6 +1,6 @@
 package com.blueoauld.server.member.entity.type
 
-enum class Gender {
+enum class GenderType {
 
     MALE, FEMALE
 }
