@@ -28,6 +28,10 @@ enum class ErrorCode(
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다."),
     INVALID_BIRTH_YEAR(HttpStatus.BAD_REQUEST, "이용 가능 연령은 19세 이상 50세 이하입니다."),
 
+    // 좋아요
+    CANNOT_HEART_SELF(HttpStatus.BAD_REQUEST, "자기 자신에게 좋아요를 보낼 수 없습니다."),
+    ALREADY_HEARTED(HttpStatus.CONFLICT, "이미 좋아요를 보낸 회원입니다."),
+
     // 로그인
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "휴대폰 번호 또는 비밀번호가 올바르지 않습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
