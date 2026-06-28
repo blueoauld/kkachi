@@ -21,6 +21,8 @@ spring:
       port: 6379
       host: localhost
       password:
+  config:
+    import: optional:file:.env[.properties]
 
 app:
   crypto:
@@ -30,3 +32,10 @@ jwt:
   secret: ${JWT_SECRET:local-dev-jwt-secret-please-change-this-to-a-long-random-value-0123456789}
   access-token-expiration: 1800000 # 30분 (ms)
   refresh-token-expiration: 1209600000 # 14일 (ms)
+
+r2:
+  endpoint: ${R2_ENDPOINT}
+  access-key: ${R2_ACCESS_KEY}
+  secret-key: ${R2_SECRET_KEY}
+  bucket: ${R2_BUCKET}
+  presigned-url-expiration: 300000 # 5분 (ms)
