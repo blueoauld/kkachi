@@ -32,6 +32,10 @@ enum class ErrorCode(
     CANNOT_HEART_SELF(HttpStatus.BAD_REQUEST, "자기 자신에게 좋아요를 보낼 수 없습니다."),
     ALREADY_HEARTED(HttpStatus.CONFLICT, "이미 좋아요를 보낸 회원입니다."),
 
+    // 차단
+    CANNOT_BLOCK_SELF(HttpStatus.BAD_REQUEST, "자기 자신을 차단할 수 없습니다."),
+    ALREADY_BLOCKED(HttpStatus.CONFLICT, "이미 차단한 회원입니다."),
+
     // 로그인
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "휴대폰 번호 또는 비밀번호가 올바르지 않습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
