@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../router.dart';
 import '../widgets/app_primary_button.dart';
 
 /// 성별 구분.
@@ -62,6 +64,28 @@ class _SignUpViewState extends State<SignUpView> {
     _codeController.addListener(_onInputChanged);
     _passwordController.addListener(_onInputChanged);
     _passwordConfirmController.addListener(_onInputChanged);
+    // 화면 진입 시 미성년자 이용 제한 안내를 띄운다.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showNotice());
+  }
+
+  void _showNotice() {
+    showCupertinoDialog<void>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text(
+          '경고',
+          style: TextStyle(color: CupertinoColors.systemRed),
+        ),
+        content: const Text('미성년자는 이용할 수 없습니다.\n적발 시 서비스 이용이 제한됩니다.'),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('닫기'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -80,7 +104,8 @@ class _SignUpViewState extends State<SignUpView> {
   }
 
   void _onSubmit() {
-    // TODO: 회원가입 처리 연동
+    // TODO: 회원가입 처리 연동. 다음 단계로 프로필 설정 화면으로 이동한다.
+    context.push(AppRoutes.profileSetup);
   }
 
   Widget _buildField(BuildContext context, {required Widget child}) {

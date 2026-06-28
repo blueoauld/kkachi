@@ -14,6 +14,7 @@ import 'ui/view/main_view.dart';
 import 'ui/view/member_detail_view.dart';
 import 'ui/view/member_search_view.dart';
 import 'ui/view/point_history_view.dart';
+import 'ui/view/profile_setup_view.dart';
 import 'ui/view/ranking_view.dart';
 import 'ui/view/report_view.dart';
 import 'ui/view/secret_image_list_view.dart';
@@ -24,6 +25,7 @@ import 'ui/view/signup_view.dart';
 abstract final class AppRoutes {
   static const login = '/login';
   static const signup = '/signup';
+  static const profileSetup = '/profile-setup';
   static const main = '/main';
   static const chat = '/chat';
   static const ranking = '/ranking';
@@ -53,6 +55,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.signup,
       builder: (context, state) => const SignUpView(),
+    ),
+    GoRoute(
+      path: AppRoutes.profileSetup,
+      builder: (context, state) => const ProfileSetupView(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
