@@ -1,10 +1,15 @@
 package com.blueoauld.server.member.application
 
+import com.blueoauld.server.activity.repository.HeartRepository
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
+import com.blueoauld.server.global.storage.ImageStorage
 import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
+import com.blueoauld.server.member.application.response.MyProfileResponse
+import com.blueoauld.server.member.entity.type.ImageType
+import com.blueoauld.server.member.repository.MemberImageRepository
 import com.blueoauld.server.member.repository.MemberRepository
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
@@ -19,6 +24,9 @@ import java.time.ZoneId
 class MemberService(
 
     private val memberRepository: MemberRepository,
+    private val memberImageRepository: MemberImageRepository,
+    private val heartRepository: HeartRepository,
+    private val imageStorage: ImageStorage,
 ) {
 
     companion object {
@@ -63,6 +71,25 @@ class MemberService(
         val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
 
         member.bump()
+    }
+
+    @Transactional(readOnly = true)
+    fun getMyProfile(memberId: Long): MyProfileResponse {
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+
+        val publicImageUrls = memberImageRepository.findByMemberIdAndType(memberId, ImageType.PUBLIC)
+            .sortedBy { it.displayOrder }
+            .map { imageStorage.generatePresignedDownloadUrl(it.objectKey) }
+
+        return MyProfileResponse(
+            memberId = member.id,
+            nickname = member.nickname,
+            gender = member.gender,
+            age = Year.now(KST).value - member.birthYear,
+            bio = member.bio,
+            heartCount = heartRepository.countByReceiverId(memberId),
+            publicImageUrls = publicImageUrls,
+        )
     }
 
     private fun validateBirthYear(birthYear: Int) {

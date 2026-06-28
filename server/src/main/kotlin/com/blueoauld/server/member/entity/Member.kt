@@ -23,20 +23,20 @@ class Member(
     private val phone: String,
 
     @Column(name = "nickname", length = 10, unique = true, nullable = false)
-    private var nickname: String = "닉네임_" + UUID.randomUUID().toString().take(6),
+    var nickname: String = "닉네임_" + UUID.randomUUID().toString().take(6),
 
     @Column(name = "password", length = 100, nullable = false)
     private val password: String,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
-    private val gender: GenderType,
+    val gender: GenderType,
 
     @Column(name = "birth_year", nullable = false)
-    private var birthYear: Int = 2000,
+    var birthYear: Int = 2000,
 
     @Column(name = "bio", length = 1000, nullable = false)
-    private var bio: String = "안녕하세요.",
+    var bio: String = "안녕하세요.",
 
     @Column(name = "comment", length = 100, nullable = false)
     private var comment: String = "반갑습니다.",

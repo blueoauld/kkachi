@@ -5,6 +5,7 @@ import com.blueoauld.server.member.application.MemberService
 import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
+import com.blueoauld.server.member.application.response.MyProfileResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,6 +16,11 @@ class MemberController(
 
     private val memberService: MemberService,
 ) {
+
+    @GetMapping("/v1/members/me")
+    fun getMyProfile(@LoginMember memberId: Long): ResponseEntity<MyProfileResponse> {
+        return ResponseEntity.ok(memberService.getMyProfile(memberId))
+    }
 
     @PatchMapping("/v1/members/me/profile")
     fun updateProfile(
