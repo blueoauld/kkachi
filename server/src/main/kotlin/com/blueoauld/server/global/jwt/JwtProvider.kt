@@ -21,6 +21,15 @@ class JwtProvider(
 
     fun generateRefreshToken(memberId: Long): String = generateToken(memberId, refreshTokenExpiration)
 
+    fun getMemberId(token: String): Long {
+        val claims = Jwts.parser()
+            .verifyWith(key)
+            .build()
+            .parseSignedClaims(token)
+            .payload
+        return claims.subject.toLong()
+    }
+
     private fun generateToken(memberId: Long, expirationMillis: Long): String {
         val now = Date()
         return Jwts.builder()
