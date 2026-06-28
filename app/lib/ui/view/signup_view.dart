@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../router.dart';
+import '../adaptive/adaptive_confirm_dialog.dart';
 import '../widgets/app_primary_button.dart';
 
 /// 성별 구분.
@@ -69,22 +70,11 @@ class _SignUpViewState extends State<SignUpView> {
   }
 
   void _showNotice() {
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text(
-          '경고',
-          style: TextStyle(color: CupertinoColors.systemRed),
-        ),
-        content: const Text('미성년자는 이용할 수 없습니다.\n적발 시 서비스 이용이 제한됩니다.'),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('닫기'),
-          ),
-        ],
-      ),
+    AdaptiveConfirmDialog.alert(
+      context,
+      title: '경고',
+      message: '미성년자는 이용할 수 없습니다.\n적발 시 서비스 이용이 제한됩니다.',
+      isTitleDestructive: true,
     );
   }
 

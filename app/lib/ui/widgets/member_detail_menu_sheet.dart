@@ -2,44 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../router.dart';
+import '../adaptive/adaptive_action_sheet.dart';
 
-class MemberDetailMenuSheet extends StatelessWidget {
-  const MemberDetailMenuSheet({super.key, required this.nickname});
-
-  final String nickname;
+/// 프로필 디테일 우상단 메뉴.
+///
+/// iOS는 액션 시트, Android는 Material 바텀시트로 분기한다.
+class MemberDetailMenuSheet {
+  const MemberDetailMenuSheet._();
 
   static Future<void> show(BuildContext context, {required String nickname}) {
-    return showCupertinoModalPopup<void>(
-      context: context,
-      builder: (context) => MemberDetailMenuSheet(nickname: nickname),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoActionSheet(
+    return AdaptiveActionSheet.show(
+      context,
       actions: [
-        CupertinoActionSheetAction(
-          isDestructiveAction: true,
-          onPressed: () {
-            Navigator.pop(context);
-            context.push(
-              '${AppRoutes.main}/${AppRoutes.member}/${AppRoutes.report}',
-              extra: nickname,
-            );
-          },
-          child: const Text('신고하기'),
+        AdaptiveActionSheetAction(
+          label: '신고하기',
+          isDestructive: true,
+          onPressed: () => context.push(
+            '${AppRoutes.main}/${AppRoutes.member}/${AppRoutes.report}',
+            extra: nickname,
+          ),
         ),
-        CupertinoActionSheetAction(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('비밀 사진 공개'),
-        ),
+        AdaptiveActionSheetAction(label: '비밀 사진 공개', onPressed: () {}),
       ],
-      cancelButton: CupertinoActionSheetAction(
-        isDefaultAction: true,
-        onPressed: () => Navigator.pop(context),
-        child: const Text('닫기'),
-      ),
     );
   }
 }

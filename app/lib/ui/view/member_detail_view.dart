@@ -4,6 +4,7 @@ import 'package:app/ui/view/photo_gallery_view.dart';
 import 'package:app/ui/widgets/app_icon_button.dart';
 import 'package:app/ui/widgets/member_detail_action_bar.dart';
 import 'package:app/ui/widgets/member_detail_menu_sheet.dart';
+import 'package:app/ui/adaptive/adaptive_confirm_dialog.dart';
 import 'package:app/ui/widgets/message_compose_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -47,26 +48,12 @@ class _MemberDetailViewState extends State<MemberDetailView> {
   }
 
   Future<void> _handleBlock(BuildContext context) async {
-    final confirmed = await showCupertinoDialog<bool>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text('${_detail.nickname}님을 차단할까요?'),
-        content: const Padding(
-          padding: EdgeInsets.only(top: 8),
-          child: Text('차단하면 대화 내역이 모두 삭제되며, 서로의 목록에서도 표시되지 않습니다.'),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('닫기'),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('차단'),
-          ),
-        ],
-      ),
+    final confirmed = await AdaptiveConfirmDialog.show(
+      context,
+      title: '${_detail.nickname}님을 차단할까요?',
+      message: '차단하면 대화 내역이 모두 삭제되며, 서로의 목록에서도 표시되지 않습니다.',
+      confirmLabel: '차단',
+      isDestructive: true,
     );
 
     if (confirmed == true && context.mounted) {
