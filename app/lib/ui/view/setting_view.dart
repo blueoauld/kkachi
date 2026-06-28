@@ -71,6 +71,7 @@ class SettingView extends StatelessWidget {
         icon: CupertinoIcons.creditcard_fill,
         title: '포인트 내역',
         color: CupertinoColors.systemIndigo,
+        route: '${AppRoutes.setting}/${AppRoutes.point}',
       ),
       _SettingItem(
         icon: CupertinoIcons.checkmark_seal_fill,

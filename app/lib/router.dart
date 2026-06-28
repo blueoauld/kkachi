@@ -12,6 +12,7 @@ import 'ui/view/like_list_view.dart';
 import 'ui/view/main_view.dart';
 import 'ui/view/member_detail_view.dart';
 import 'ui/view/member_search_view.dart';
+import 'ui/view/point_history_view.dart';
 import 'ui/view/ranking_view.dart';
 import 'ui/view/report_view.dart';
 import 'ui/view/secret_image_list_view.dart';
@@ -30,6 +31,7 @@ abstract final class AppRoutes {
   static const like = 'like';
   static const secret = 'secret';
   static const block = 'block';
+  static const point = 'point';
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -122,6 +124,11 @@ final GoRouter appRouter = GoRouter(
                   path: AppRoutes.block,
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) => const BlockListView(),
+                ),
+                GoRoute(
+                  path: AppRoutes.point,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => const PointHistoryView(),
                 ),
               ],
             ),
