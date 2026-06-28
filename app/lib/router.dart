@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
+import 'model/chat_room.dart';
 import 'model/member.dart';
 import 'ui/home/home_page.dart';
+import 'ui/view/chat_detail_view.dart';
 import 'ui/view/chat_search_view.dart';
 import 'ui/view/chat_view.dart';
 import 'ui/view/main_view.dart';
@@ -21,6 +23,7 @@ abstract final class AppRoutes {
   static const member = 'member';
   static const report = 'report';
   static const search = 'search';
+  static const room = 'room';
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -74,6 +77,12 @@ final GoRouter appRouter = GoRouter(
                   path: AppRoutes.search,
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) => const ChatSearchView(),
+                ),
+                GoRoute(
+                  path: AppRoutes.room,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) =>
+                      ChatDetailView(room: state.extra! as ChatRoom),
                 ),
               ],
             ),

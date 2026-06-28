@@ -1,6 +1,8 @@
 import 'package:app/model/chat_room.dart';
+import 'package:app/router.dart';
 import 'package:app/ui/widgets/chat_list.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 
 /// 채팅 검색 화면. (현재는 UI 껍데기)
 ///
@@ -72,7 +74,13 @@ class _ChatSearchViewState extends State<ChatSearchView> {
             Expanded(
               child: _results.isEmpty
                   ? const _EmptyResult()
-                  : ChatList(rooms: _results, onTapRoom: (room) {}),
+                  : ChatList(
+                      rooms: _results,
+                      onTapRoom: (room) => context.push(
+                        '${AppRoutes.chat}/${AppRoutes.room}',
+                        extra: room,
+                      ),
+                    ),
             ),
           ],
         ),

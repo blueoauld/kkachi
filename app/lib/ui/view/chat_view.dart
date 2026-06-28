@@ -44,7 +44,13 @@ class _ChatViewState extends State<ChatView> {
               onChanged: (v) => setState(() => _segment = v),
             ),
             Expanded(
-              child: ChatList(rooms: _rooms, onTapRoom: (room) {}),
+              child: ChatList(
+                rooms: _rooms,
+                onTapRoom: (room) => context.push(
+                  '${AppRoutes.chat}/${AppRoutes.room}',
+                  extra: room,
+                ),
+              ),
             ),
           ],
         ),
