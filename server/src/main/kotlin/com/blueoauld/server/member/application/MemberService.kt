@@ -1,12 +1,16 @@
 package com.blueoauld.server.member.application
 
+import com.blueoauld.server.activity.repository.BlockRepository
+import com.blueoauld.server.activity.repository.FavoriteRepository
 import com.blueoauld.server.activity.repository.HeartRepository
+import com.blueoauld.server.activity.repository.SecretImageAccessRepository
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.storage.ImageStorage
 import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
+import com.blueoauld.server.member.application.response.MemberProfileResponse
 import com.blueoauld.server.member.application.response.MyProfileResponse
 import com.blueoauld.server.member.entity.type.ImageType
 import com.blueoauld.server.member.repository.MemberImageRepository
@@ -27,6 +31,9 @@ class MemberService(
     private val memberRepository: MemberRepository,
     private val memberImageRepository: MemberImageRepository,
     private val heartRepository: HeartRepository,
+    private val favoriteRepository: FavoriteRepository,
+    private val blockRepository: BlockRepository,
+    private val secretImageAccessRepository: SecretImageAccessRepository,
     private val imageStorage: ImageStorage,
 ) {
 
@@ -88,6 +95,32 @@ class MemberService(
             age = Year.now(KST).value - member.birthYear,
             bio = member.bio,
             heartCount = heartRepository.countByReceiverId(memberId),
+            publicImageUrls = publicImageUrls,
+        )
+    }
+
+    @Transactional(readOnly = true)
+    fun getMemberProfile(viewerId: Long, targetId: Long): MemberProfileResponse {
+        val target = memberRepository.findByIdOrNull(targetId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+
+        val publicImageUrls = memberImageRepository.findByMemberIdAndType(targetId, ImageType.PUBLIC)
+            .sortedBy { it.displayOrder }
+            .map { imageStorage.generatePresignedDownloadUrl(it.objectKey) }
+
+        return MemberProfileResponse(
+            memberId = target.id,
+            nickname = target.nickname,
+            gender = target.gender,
+            age = Year.now(KST).value - target.birthYear,
+            heartCount = heartRepository.countByReceiverId(targetId),
+            updatedAt = target.updatedAt,
+            distance = memberRepository.calculateDistanceMeters(viewerId, targetId),
+            favorited = favoriteRepository.existsByOwnerIdAndTargetId(viewerId, targetId),
+            hearted = heartRepository.existsBySenderIdAndReceiverId(viewerId, targetId),
+            secretImageOpenedByMe = secretImageAccessRepository.existsByOwnerIdAndViewerId(viewerId, targetId),
+            secretImageOpenedToMe = secretImageAccessRepository.existsByOwnerIdAndViewerId(targetId, viewerId),
+            secretImageCount = memberImageRepository.countByMemberIdAndType(targetId, ImageType.SECRET),
+            blocked = blockRepository.existsByBlockerIdAndBlockedId(viewerId, targetId),
             publicImageUrls = publicImageUrls,
         )
     }

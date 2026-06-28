@@ -48,7 +48,7 @@ class Member(
     private var createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at", nullable = false)
-    private var updatedAt: Instant = Instant.now(),
+    var updatedAt: Instant = Instant.now(),
 ) {
 
     fun matchesPassword(rawPassword: String, passwordEncoder: PasswordEncoder): Boolean =

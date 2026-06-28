@@ -8,5 +8,7 @@ interface MemberImageRepository : JpaRepository<MemberImage, Long> {
 
     fun findByMemberIdAndType(memberId: Long, type: ImageType): List<MemberImage>
 
+    fun countByMemberIdAndType(memberId: Long, type: ImageType): Long
+
     fun existsByObjectKey(objectKey: String): Boolean
 }
