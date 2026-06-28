@@ -23,7 +23,7 @@ class Member(
     private val phone: String,
 
     @Column(name = "nickname", length = 10, unique = true, nullable = false)
-    private val nickname: String = "닉네임_" + UUID.randomUUID().toString().take(6),
+    private var nickname: String = "닉네임_" + UUID.randomUUID().toString().take(6),
 
     @Column(name = "password", length = 100, nullable = false)
     private val password: String,
@@ -33,10 +33,10 @@ class Member(
     private val gender: GenderType,
 
     @Column(name = "birth_year", nullable = false)
-    private val birthYear: Int = 2000,
+    private var birthYear: Int = 2000,
 
     @Column(name = "bio", length = 1000, nullable = false)
-    private val bio: String = "안녕하세요.",
+    private var bio: String = "안녕하세요.",
 
     @Column(name = "comment", length = 100, nullable = false)
     private val comment: String = "반갑습니다.",
@@ -53,6 +53,12 @@ class Member(
 
     fun matchesPassword(rawPassword: String, passwordEncoder: PasswordEncoder): Boolean =
         passwordEncoder.matches(rawPassword, this.password)
+
+    fun updateProfile(nickname: String, birthYear: Int, bio: String) {
+        this.nickname = nickname
+        this.birthYear = birthYear
+        this.bio = bio
+    }
 
     @PrePersist
     fun onCreate() {

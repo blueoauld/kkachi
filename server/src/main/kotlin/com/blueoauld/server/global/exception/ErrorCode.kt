@@ -23,6 +23,11 @@ enum class ErrorCode(
     PASSWORD_CONFIRM_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     ALREADY_REGISTERED_PHONE(HttpStatus.CONFLICT, "이미 가입된 휴대폰 번호입니다."),
 
+    // 회원
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
+    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다."),
+    INVALID_BIRTH_YEAR(HttpStatus.BAD_REQUEST, "이용 가능 연령은 19세 이상 50세 이하입니다."),
+
     // 로그인
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "휴대폰 번호 또는 비밀번호가 올바르지 않습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
