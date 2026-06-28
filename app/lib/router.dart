@@ -4,14 +4,17 @@ import 'package:go_router/go_router.dart';
 import 'model/chat_room.dart';
 import 'model/member.dart';
 import 'ui/home/home_page.dart';
+import 'ui/view/block_list_view.dart';
 import 'ui/view/chat_detail_view.dart';
 import 'ui/view/chat_search_view.dart';
 import 'ui/view/chat_view.dart';
+import 'ui/view/like_list_view.dart';
 import 'ui/view/main_view.dart';
 import 'ui/view/member_detail_view.dart';
 import 'ui/view/member_search_view.dart';
 import 'ui/view/ranking_view.dart';
 import 'ui/view/report_view.dart';
+import 'ui/view/secret_image_list_view.dart';
 import 'ui/view/setting_view.dart';
 
 /// 앱 라우트 경로 모음.
@@ -24,6 +27,9 @@ abstract final class AppRoutes {
   static const report = 'report';
   static const search = 'search';
   static const room = 'room';
+  static const like = 'like';
+  static const secret = 'secret';
+  static const block = 'block';
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -101,6 +107,23 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: AppRoutes.setting,
               builder: (context, state) => const SettingView(),
+              routes: [
+                GoRoute(
+                  path: AppRoutes.like,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => const LikeListView(),
+                ),
+                GoRoute(
+                  path: AppRoutes.secret,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => const SecretImageListView(),
+                ),
+                GoRoute(
+                  path: AppRoutes.block,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) => const BlockListView(),
+                ),
+              ],
             ),
           ],
         ),

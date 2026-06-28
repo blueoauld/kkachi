@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../router.dart';
 import '../widgets/app_icon_button.dart';
 import '../widgets/setting_menu_sheet.dart';
 
@@ -12,6 +14,7 @@ class _SettingItem {
     required this.color,
     this.launchUri,
     this.launchMode = LaunchMode.externalApplication,
+    this.route,
   });
 
   final IconData icon;
@@ -23,6 +26,9 @@ class _SettingItem {
 
   /// 주소를 여는 방식. (외부 앱 / 앱 내부 브라우저)
   final LaunchMode launchMode;
+
+  /// 항목을 탭했을 때 앱 내부에서 이동할 라우트 경로.
+  final String? route;
 }
 
 class SettingView extends StatelessWidget {
@@ -45,16 +51,19 @@ class SettingView extends StatelessWidget {
         icon: CupertinoIcons.heart_fill,
         title: '좋아요 목록',
         color: CupertinoColors.systemPink,
+        route: '${AppRoutes.setting}/${AppRoutes.like}',
       ),
       _SettingItem(
         icon: CupertinoIcons.lock_fill,
         title: '비밀 사진 목록',
         color: CupertinoColors.systemGreen,
+        route: '${AppRoutes.setting}/${AppRoutes.secret}',
       ),
       _SettingItem(
         icon: CupertinoIcons.nosign,
         title: '차단 목록',
         color: CupertinoColors.systemGrey,
+        route: '${AppRoutes.setting}/${AppRoutes.block}',
       ),
     ],
     [
@@ -160,9 +169,13 @@ class SettingView extends StatelessWidget {
                         ),
                       ),
                       title: Text(item.title),
-                      onTap: item.launchUri == null
-                          ? () {}
-                          : () => _launch(item.launchUri!, item.launchMode),
+                      onTap: () {
+                        if (item.launchUri != null) {
+                          _launch(item.launchUri!, item.launchMode);
+                        } else if (item.route != null) {
+                          context.push(item.route!);
+                        }
+                      },
                     ),
                 ],
               ),
