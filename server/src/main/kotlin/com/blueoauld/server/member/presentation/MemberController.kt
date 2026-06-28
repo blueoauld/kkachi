@@ -2,6 +2,7 @@ package com.blueoauld.server.member.presentation
 
 import com.blueoauld.server.global.resolver.LoginMember
 import com.blueoauld.server.member.application.MemberService
+import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
 import jakarta.validation.Valid
@@ -33,6 +34,15 @@ class MemberController(
         @Valid @RequestBody request: UpdateLocationRequest,
     ): ResponseEntity<Unit> {
         memberService.updateLocation(memberId, request)
+        return ResponseEntity.ok().build()
+    }
+
+    @PatchMapping("/v1/members/me/comment")
+    fun updateComment(
+        @LoginMember memberId: Long,
+        @Valid @RequestBody request: UpdateCommentRequest,
+    ): ResponseEntity<Unit> {
+        memberService.updateComment(memberId, request)
         return ResponseEntity.ok().build()
     }
 }

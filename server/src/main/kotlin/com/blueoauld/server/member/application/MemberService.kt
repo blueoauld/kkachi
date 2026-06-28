@@ -2,6 +2,7 @@ package com.blueoauld.server.member.application
 
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
+import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
 import com.blueoauld.server.member.repository.MemberRepository
@@ -48,6 +49,13 @@ class MemberService(
 
         val location = GEOMETRY_FACTORY.createPoint(Coordinate(request.longitude, request.latitude))
         member.updateLocation(location)
+    }
+
+    @Transactional
+    fun updateComment(memberId: Long, request: UpdateCommentRequest) {
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+
+        member.updateComment(request.comment)
     }
 
     private fun validateBirthYear(birthYear: Int) {

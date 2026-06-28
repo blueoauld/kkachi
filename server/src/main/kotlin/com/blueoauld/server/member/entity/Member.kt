@@ -39,7 +39,7 @@ class Member(
     private var bio: String = "안녕하세요.",
 
     @Column(name = "comment", length = 100, nullable = false)
-    private val comment: String = "반갑습니다.",
+    private var comment: String = "반갑습니다.",
 
     @Column(name = "location", columnDefinition = "geography(Point, 4326)")
     private var location: Point? = null,
@@ -62,6 +62,10 @@ class Member(
 
     fun updateLocation(location: Point) {
         this.location = location
+    }
+
+    fun updateComment(comment: String) {
+        this.comment = comment
     }
 
     @PrePersist
