@@ -13,6 +13,7 @@ import com.blueoauld.server.member.repository.MemberImageRepository
 import com.blueoauld.server.member.repository.MemberRepository
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.PrecisionModel
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -55,8 +56,7 @@ class MemberService(
     fun updateLocation(memberId: Long, request: UpdateLocationRequest) {
         val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
 
-        val location = GEOMETRY_FACTORY.createPoint(Coordinate(request.longitude, request.latitude))
-        member.updateLocation(location)
+        member.updateLocation(toLocation(request.latitude, request.longitude))
     }
 
     @Transactional
@@ -98,4 +98,11 @@ class MemberService(
             throw BusinessException(ErrorCode.INVALID_BIRTH_YEAR)
         }
     }
+
+    private fun toLocation(latitude: Double?, longitude: Double?): Point? =
+        if (latitude != null && longitude != null) {
+            GEOMETRY_FACTORY.createPoint(Coordinate(longitude, latitude))
+        } else {
+            null
+        }
 }

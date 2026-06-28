@@ -60,7 +60,7 @@ class Member(
         this.bio = bio
     }
 
-    fun updateLocation(location: Point) {
+    fun updateLocation(location: Point?) {
         this.location = location
     }
 
