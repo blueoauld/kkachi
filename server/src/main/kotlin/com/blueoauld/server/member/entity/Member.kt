@@ -68,6 +68,10 @@ class Member(
         this.comment = comment
     }
 
+    fun bump() {
+        this.updatedAt = Instant.now()
+    }
+
     @PrePersist
     fun onCreate() {
         this.createdAt = Instant.now()

@@ -58,6 +58,13 @@ class MemberService(
         member.updateComment(request.comment)
     }
 
+    @Transactional
+    fun bump(memberId: Long) {
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+
+        member.bump()
+    }
+
     private fun validateBirthYear(birthYear: Int) {
         val age = Year.now(KST).value - birthYear
         if (age !in MIN_AGE..MAX_AGE) {

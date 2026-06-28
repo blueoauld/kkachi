@@ -7,10 +7,7 @@ import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api")
 @RestController
@@ -43,6 +40,12 @@ class MemberController(
         @Valid @RequestBody request: UpdateCommentRequest,
     ): ResponseEntity<Unit> {
         memberService.updateComment(memberId, request)
+        return ResponseEntity.ok().build()
+    }
+
+    @PostMapping("/v1/members/me/bump")
+    fun bump(@LoginMember memberId: Long): ResponseEntity<Unit> {
+        memberService.bump(memberId)
         return ResponseEntity.ok().build()
     }
 }
