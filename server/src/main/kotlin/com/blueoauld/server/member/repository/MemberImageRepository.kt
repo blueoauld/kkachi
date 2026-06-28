@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface MemberImageRepository : JpaRepository<MemberImage, Long> {
 
-    fun countByMemberIdAndType(memberId: Long, type: ImageType): Long
+    fun findByMemberIdAndType(memberId: Long, type: ImageType): List<MemberImage>
+
+    fun existsByObjectKey(objectKey: String): Boolean
 }

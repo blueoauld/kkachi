@@ -29,6 +29,8 @@ enum class ErrorCode(
 
     // 이미지
     UNSUPPORTED_IMAGE_TYPE(HttpStatus.BAD_REQUEST, "지원하지 않는 이미지 형식입니다."),
-    IMAGE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "이미지는 최대 5장까지 등록할 수 있습니다."),
     IMAGE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "이미지는 최대 20MB까지 업로드할 수 있습니다."),
+    INVALID_IMAGE_OBJECT_KEY(HttpStatus.BAD_REQUEST, "올바르지 않은 이미지 키입니다."),
+    IMAGE_ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 등록된 이미지입니다."),
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
 }

@@ -1,6 +1,10 @@
 package com.blueoauld.server.global.storage
 
-fun interface ImageStorage {
+interface ImageStorage {
 
     fun generatePresignedUploadUrl(objectKey: String, contentType: String, contentLength: Long): String
+
+    fun copy(sourceKey: String, destinationKey: String)
+
+    fun delete(objectKey: String)
 }

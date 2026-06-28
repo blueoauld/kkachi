@@ -5,12 +5,6 @@ import jakarta.persistence.*
 import java.time.Instant
 
 @Entity
-@Table(
-    name = "member_image",
-    uniqueConstraints = [
-        UniqueConstraint(columnNames = ["member_id", "type", "display_order"]),
-    ],
-)
 class MemberImage(
 
     @Id
@@ -25,7 +19,7 @@ class MemberImage(
     @Column(name = "type", nullable = false)
     val type: ImageType,
 
-    @Column(name = "object_key", nullable = false)
+    @Column(name = "object_key", nullable = false, unique = true)
     val objectKey: String,
 
     @Column(name = "display_order", nullable = false)
