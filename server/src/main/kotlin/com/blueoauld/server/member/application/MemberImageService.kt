@@ -9,7 +9,6 @@ import com.blueoauld.server.member.application.response.ImageUploadUrlResponse
 import com.blueoauld.server.member.entity.MemberImage
 import com.blueoauld.server.member.entity.type.ImageType
 import com.blueoauld.server.member.repository.MemberImageRepository
-import com.blueoauld.server.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -17,7 +16,6 @@ import java.util.*
 @Service
 class MemberImageService(
 
-    private val memberRepository: MemberRepository,
     private val memberImageRepository: MemberImageRepository,
     private val imageStorage: ImageStorage,
 ) {
@@ -92,7 +90,7 @@ class MemberImageService(
 
         memberImageRepository.save(
             MemberImage(
-                member = memberRepository.getReferenceById(memberId),
+                memberId = memberId,
                 type = type,
                 objectKey = objectKey,
                 displayOrder = order,

@@ -29,8 +29,8 @@ class FavoriteService(
 
         favoriteRepository.save(
             Favorite(
-                owner = memberRepository.getReferenceById(ownerId),
-                target = memberRepository.getReferenceById(targetId),
+                ownerId = ownerId,
+                targetId = targetId,
             ),
         )
     }

@@ -29,8 +29,8 @@ class HeartService(
 
         heartRepository.save(
             Heart(
-                sender = memberRepository.getReferenceById(senderId),
-                receiver = memberRepository.getReferenceById(receiverId),
+                senderId = senderId,
+                receiverId = receiverId,
             ),
         )
     }

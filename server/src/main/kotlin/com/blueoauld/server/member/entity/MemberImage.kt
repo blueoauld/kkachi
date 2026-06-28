@@ -11,9 +11,8 @@ class MemberImage(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    val member: Member,
+    @Column(name = "member_id", nullable = false)
+    val memberId: Long,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)

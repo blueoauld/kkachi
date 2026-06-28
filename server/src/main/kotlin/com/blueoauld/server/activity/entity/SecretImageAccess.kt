@@ -1,6 +1,5 @@
 package com.blueoauld.server.activity.entity
 
-import com.blueoauld.server.member.entity.Member
 import jakarta.persistence.*
 import java.time.Instant
 
@@ -17,13 +16,11 @@ class SecretImageAccess(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false)
-    val owner: Member,
+    @Column(name = "owner_id", nullable = false)
+    val ownerId: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "viewer_id", nullable = false)
-    val viewer: Member,
+    @Column(name = "viewer_id", nullable = false)
+    val viewerId: Long,
 
     @Column(name = "granted_at", nullable = false, updatable = false)
     var grantedAt: Instant = Instant.now(),

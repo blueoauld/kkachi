@@ -1,6 +1,5 @@
 package com.blueoauld.server.activity.entity
 
-import com.blueoauld.server.member.entity.Member
 import jakarta.persistence.*
 import java.time.Instant
 
@@ -17,13 +16,11 @@ class Heart(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false)
-    val sender: Member,
+    @Column(name = "sender_id", nullable = false)
+    val senderId: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver_id", nullable = false)
-    val receiver: Member,
+    @Column(name = "receiver_id", nullable = false)
+    val receiverId: Long,
 
     @Column(name = "created_at", nullable = false, updatable = false)
     var createdAt: Instant = Instant.now(),

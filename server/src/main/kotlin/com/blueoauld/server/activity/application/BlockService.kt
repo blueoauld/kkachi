@@ -29,8 +29,8 @@ class BlockService(
 
         blockRepository.save(
             Block(
-                blocker = memberRepository.getReferenceById(blockerId),
-                blocked = memberRepository.getReferenceById(blockedId),
+                blockerId = blockerId,
+                blockedId = blockedId,
             ),
         )
     }

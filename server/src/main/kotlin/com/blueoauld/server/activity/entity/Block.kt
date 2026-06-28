@@ -1,6 +1,5 @@
 package com.blueoauld.server.activity.entity
 
-import com.blueoauld.server.member.entity.Member
 import jakarta.persistence.*
 import java.time.Instant
 
@@ -17,13 +16,11 @@ class Block(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "blocker_id", nullable = false)
-    val blocker: Member,
+    @Column(name = "blocker_id", nullable = false)
+    val blockerId: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "blocked_id", nullable = false)
-    val blocked: Member,
+    @Column(name = "blocked_id", nullable = false)
+    val blockedId: Long,
 
     @Column(name = "created_at", nullable = false, updatable = false)
     var createdAt: Instant = Instant.now(),
