@@ -38,9 +38,7 @@ class ActivityList extends StatelessWidget {
 
     return CupertinoScrollbar(
       child: ListView.builder(
-        padding: EdgeInsets.only(
-          bottom: 12 + MediaQuery.of(context).padding.bottom,
-        ),
+        padding: EdgeInsets.symmetric(vertical: 16),
         itemCount: members.length,
         itemBuilder: (context, index) {
           final member = members[index];

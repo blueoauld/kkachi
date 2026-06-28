@@ -61,7 +61,7 @@ class _ReportViewState extends State<ReportView> {
             behavior: HitTestBehavior.opaque,
             onTap: () => setState(() => _selectedCategory = category),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: CupertinoColors.systemGrey6.resolveFrom(context),
                 borderRadius: BorderRadius.circular(12),
