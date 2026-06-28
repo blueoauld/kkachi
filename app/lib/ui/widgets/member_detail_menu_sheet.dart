@@ -14,6 +14,7 @@ class MemberDetailMenuSheet {
     return AdaptiveActionSheet.show(
       context,
       actions: [
+        AdaptiveActionSheetAction(label: '비밀 사진 공개', onPressed: () {}),
         AdaptiveActionSheetAction(
           label: '신고하기',
           isDestructive: true,
@@ -22,7 +23,6 @@ class MemberDetailMenuSheet {
             extra: nickname,
           ),
         ),
-        AdaptiveActionSheetAction(label: '비밀 사진 공개', onPressed: () {}),
       ],
     );
   }
