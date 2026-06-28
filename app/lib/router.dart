@@ -9,6 +9,7 @@ import 'ui/view/chat_detail_view.dart';
 import 'ui/view/chat_search_view.dart';
 import 'ui/view/chat_view.dart';
 import 'ui/view/like_list_view.dart';
+import 'ui/view/login_view.dart';
 import 'ui/view/main_view.dart';
 import 'ui/view/member_detail_view.dart';
 import 'ui/view/member_search_view.dart';
@@ -20,6 +21,7 @@ import 'ui/view/setting_view.dart';
 
 /// 앱 라우트 경로 모음.
 abstract final class AppRoutes {
+  static const login = '/login';
   static const main = '/main';
   static const chat = '/chat';
   static const ranking = '/ranking';
@@ -40,8 +42,12 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: AppRoutes.main,
+  initialLocation: AppRoutes.login,
   routes: [
+    GoRoute(
+      path: AppRoutes.login,
+      builder: (context, state) => const LoginView(),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           HomePage(navigationShell: navigationShell),

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
+import '../widgets/app_primary_button.dart';
+
 /// 신고 카테고리 목록.
 const _reportCategories = <String>[
   '욕설 / 비방',
@@ -173,22 +175,10 @@ class _ReportViewState extends State<ReportView> {
               ),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: CupertinoButton(
-                    color: CupertinoColors.systemRed,
-                    disabledColor: CupertinoColors.systemRed.withValues(
-                      alpha: 0.4,
-                    ),
-                    onPressed: _selectedCategory == null ? null : _onSubmit,
-                    child: const Text(
-                      '신고하기',
-                      style: TextStyle(
-                        color: CupertinoColors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                child: AppPrimaryButton(
+                  label: '신고하기',
+                  color: CupertinoColors.systemRed,
+                  onPressed: _selectedCategory == null ? null : _onSubmit,
                 ),
               ),
             ],
