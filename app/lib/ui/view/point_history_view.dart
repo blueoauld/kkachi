@@ -110,8 +110,8 @@ class _TransactionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final secondaryColor = CupertinoColors.secondaryLabel.resolveFrom(context);
     final amountColor = transaction.isEarned
-        ? CupertinoColors.systemBlue.resolveFrom(context)
-        : CupertinoColors.systemRed.resolveFrom(context);
+        ? CupertinoColors.systemRed.resolveFrom(context)
+        : CupertinoColors.systemBlue.resolveFrom(context);
     final sign = transaction.isEarned ? '+' : '-';
 
     return Container(

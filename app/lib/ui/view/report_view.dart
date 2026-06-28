@@ -69,12 +69,20 @@ class _ReportViewState extends State<ReportView> {
                   Expanded(
                     child: Text(category, style: const TextStyle(fontSize: 16)),
                   ),
-                  if (category == _selectedCategory)
-                    Icon(
-                      CupertinoIcons.checkmark_alt,
-                      size: 20,
-                      color: CupertinoColors.activeBlue.resolveFrom(context),
-                    ),
+                  // 선택 여부와 무관하게 아이콘 자리를 고정해 행 높이를 유지한다.
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: category == _selectedCategory
+                        ? Icon(
+                            CupertinoIcons.checkmark_alt,
+                            size: 20,
+                            color: CupertinoColors.activeBlue.resolveFrom(
+                              context,
+                            ),
+                          )
+                        : null,
+                  ),
                 ],
               ),
             ),
