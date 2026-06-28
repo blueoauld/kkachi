@@ -5,7 +5,7 @@ import com.blueoauld.server.auth.application.request.LoginRequest
 import com.blueoauld.server.auth.application.request.ReissueRequest
 import com.blueoauld.server.auth.application.request.SendVerificationCodeRequest
 import com.blueoauld.server.auth.application.request.SignupRequest
-import com.blueoauld.server.auth.application.response.LoginResponse
+import com.blueoauld.server.auth.application.response.TokenResponse
 import com.blueoauld.server.global.resolver.LoginMember
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -29,19 +29,19 @@ class AuthController(
     }
 
     @PostMapping("/v1/auth/signup")
-    fun signup(@Valid @RequestBody request: SignupRequest): ResponseEntity<Unit> {
-        authService.signup(request)
-        return ResponseEntity.status(HttpStatus.CREATED).build()
+    fun signup(@Valid @RequestBody request: SignupRequest): ResponseEntity<TokenResponse> {
+        val response = authService.signup(request)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @PostMapping("/v1/auth/login")
-    fun login(@Valid @RequestBody request: LoginRequest): ResponseEntity<LoginResponse> {
+    fun login(@Valid @RequestBody request: LoginRequest): ResponseEntity<TokenResponse> {
         val response = authService.login(request)
         return ResponseEntity.ok(response)
     }
 
     @PostMapping("/v1/auth/reissue")
-    fun reissue(@Valid @RequestBody request: ReissueRequest): ResponseEntity<LoginResponse> {
+    fun reissue(@Valid @RequestBody request: ReissueRequest): ResponseEntity<TokenResponse> {
         val response = authService.reissue(request)
         return ResponseEntity.ok(response)
     }

@@ -5,7 +5,7 @@ import com.blueoauld.server.auth.application.request.LoginRequest
 import com.blueoauld.server.auth.application.request.ReissueRequest
 import com.blueoauld.server.auth.application.request.SendVerificationCodeRequest
 import com.blueoauld.server.auth.application.request.SignupRequest
-import com.blueoauld.server.auth.application.response.LoginResponse
+import com.blueoauld.server.auth.application.response.TokenResponse
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.jwt.JwtProvider
@@ -76,7 +76,7 @@ class AuthService(
     }
 
     @Transactional
-    fun signup(request: SignupRequest) {
+    fun signup(request: SignupRequest): TokenResponse {
         validateVerificationCode(request.phone, request.verificationCode)
 
         if (request.password != request.passwordConfirm) {
@@ -91,12 +91,14 @@ class AuthService(
             password = passwordEncoder.encode(request.password)!!,
             gender = request.gender,
         )
-        memberRepository.save(member)
+        val savedMember = memberRepository.save(member)
 
         stringRedisTemplate.delete(verificationCodeKey(request.phone))
+
+        return issueTokens(savedMember.id)
     }
 
-    fun login(request: LoginRequest): LoginResponse {
+    fun login(request: LoginRequest): TokenResponse {
         val member = memberRepository.findByPhone(request.phone) ?: throw BusinessException(ErrorCode.LOGIN_FAILED)
 
         if (!member.matchesPassword(request.password, passwordEncoder)) {
@@ -106,7 +108,7 @@ class AuthService(
         return issueTokens(member.id)
     }
 
-    fun reissue(request: ReissueRequest): LoginResponse {
+    fun reissue(request: ReissueRequest): TokenResponse {
         val memberId = try {
             jwtProvider.getMemberId(request.refreshToken)
         } catch (_: JwtException) {
@@ -125,7 +127,7 @@ class AuthService(
         stringRedisTemplate.delete(refreshTokenKey(memberId))
     }
 
-    private fun issueTokens(memberId: Long): LoginResponse {
+    private fun issueTokens(memberId: Long): TokenResponse {
         val accessToken = jwtProvider.generateAccessToken(memberId)
         val refreshToken = jwtProvider.generateRefreshToken(memberId)
 
@@ -134,7 +136,7 @@ class AuthService(
             refreshToken,
             Duration.ofMillis(jwtProvider.refreshTokenExpiration),
         )
-        return LoginResponse(accessToken, refreshToken)
+        return TokenResponse(accessToken, refreshToken)
     }
 
     private fun refreshTokenKey(memberId: Long) = "$REFRESH_TOKEN_KEY_PREFIX$memberId"
