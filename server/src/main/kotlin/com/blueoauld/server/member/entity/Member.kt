@@ -42,7 +42,7 @@ class Member(
     private val comment: String = "반갑습니다.",
 
     @Column(name = "location", columnDefinition = "geography(Point, 4326)")
-    private val location: Point? = null,
+    private var location: Point? = null,
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private var createdAt: Instant = Instant.now(),
@@ -58,6 +58,10 @@ class Member(
         this.nickname = nickname
         this.birthYear = birthYear
         this.bio = bio
+    }
+
+    fun updateLocation(location: Point) {
+        this.location = location
     }
 
     @PrePersist

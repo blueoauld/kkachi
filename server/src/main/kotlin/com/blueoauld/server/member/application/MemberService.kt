@@ -2,8 +2,12 @@ package com.blueoauld.server.member.application
 
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
+import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
 import com.blueoauld.server.member.repository.MemberRepository
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.PrecisionModel
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -20,6 +24,9 @@ class MemberService(
         private val KST = ZoneId.of("Asia/Seoul")
         private const val MIN_AGE = 19
         private const val MAX_AGE = 50
+
+        private const val SRID_WGS84 = 4326
+        private val GEOMETRY_FACTORY = GeometryFactory(PrecisionModel(), SRID_WGS84)
     }
 
     @Transactional
@@ -33,6 +40,14 @@ class MemberService(
         }
 
         member.updateProfile(request.nickname, request.birthYear, request.bio)
+    }
+
+    @Transactional
+    fun updateLocation(memberId: Long, request: UpdateLocationRequest) {
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+
+        val location = GEOMETRY_FACTORY.createPoint(Coordinate(request.longitude, request.latitude))
+        member.updateLocation(location)
     }
 
     private fun validateBirthYear(birthYear: Int) {
