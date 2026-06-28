@@ -25,3 +25,8 @@ spring:
 app:
   crypto:
     secret-key: ${APP_CRYPTO_SECRET_KEY:local-dev-secret-key}
+
+jwt:
+  secret: ${JWT_SECRET:local-dev-jwt-secret-please-change-this-to-a-long-random-value-0123456789}
+  access-token-expiration: 1800000 # 30분 (ms)
+  refresh-token-expiration: 1209600000 # 14일 (ms)

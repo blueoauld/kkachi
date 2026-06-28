@@ -6,6 +6,7 @@ import jakarta.persistence.*
 import org.hibernate.annotations.SoftDelete
 import org.hibernate.annotations.SoftDeleteType
 import org.locationtech.jts.geom.Point
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.Instant
 import java.util.*
 
@@ -15,7 +16,7 @@ class Member(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long = 0,
+    val id: Long = 0,
 
     @Column(name = "profile_url")
     private val profileUrl: String? = null,
@@ -52,6 +53,9 @@ class Member(
     @Column(name = "updated_at", nullable = false)
     private var updatedAt: Instant = Instant.now(),
 ) {
+
+    fun matchesPassword(rawPassword: String, passwordEncoder: PasswordEncoder): Boolean =
+        passwordEncoder.matches(rawPassword, password)
 
     @PrePersist
     fun onCreate() {

@@ -1,10 +1,13 @@
 package com.blueoauld.server.auth.application
 
 import com.blueoauld.server.auth.application.port.SmsSender
+import com.blueoauld.server.auth.application.request.LoginRequest
 import com.blueoauld.server.auth.application.request.SendVerificationCodeRequest
 import com.blueoauld.server.auth.application.request.SignupRequest
+import com.blueoauld.server.auth.application.response.LoginResponse
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
+import com.blueoauld.server.global.jwt.JwtProvider
 import com.blueoauld.server.global.security.CodeGenerator
 import com.blueoauld.server.global.security.PhoneHasher
 import com.blueoauld.server.member.entity.Member
@@ -27,10 +30,13 @@ class AuthService(
     private val codeGenerator: CodeGenerator,
     private val passwordEncoder: PasswordEncoder,
     private val phoneHasher: PhoneHasher,
+    private val jwtProvider: JwtProvider,
 ) {
 
     companion object {
         private val KST = ZoneId.of("Asia/Seoul")
+
+        private const val REFRESH_TOKEN_KEY_PREFIX = "auth:refresh_token:"
 
         // 인증코드
         private const val VERIFICATION_CODE_LENGTH = 6
@@ -86,6 +92,25 @@ class AuthService(
         memberRepository.save(member)
 
         stringRedisTemplate.delete(verificationCodeKey(request.phone))
+    }
+
+    fun login(request: LoginRequest): LoginResponse {
+        val member = memberRepository.findByPhone(request.phone) ?: throw BusinessException(ErrorCode.LOGIN_FAILED)
+
+        if (!member.matchesPassword(request.password, passwordEncoder)) {
+            throw BusinessException(ErrorCode.LOGIN_FAILED)
+        }
+
+        val accessToken = jwtProvider.generateAccessToken(member.id)
+        val refreshToken = jwtProvider.generateRefreshToken(member.id)
+
+        stringRedisTemplate.opsForValue().set(
+            "$REFRESH_TOKEN_KEY_PREFIX${member.id}",
+            refreshToken,
+            Duration.ofMillis(jwtProvider.refreshTokenExpiration),
+        )
+
+        return LoginResponse(accessToken, refreshToken)
     }
 
     private fun validateVerificationCode(phone: String, verificationCode: String) {

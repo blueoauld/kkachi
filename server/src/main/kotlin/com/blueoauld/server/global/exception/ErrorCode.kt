@@ -20,4 +20,7 @@ enum class ErrorCode(
     // 회원가입
     PASSWORD_CONFIRM_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     ALREADY_REGISTERED_PHONE(HttpStatus.CONFLICT, "이미 가입된 휴대폰 번호입니다."),
+
+    // 로그인
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "휴대폰 번호 또는 비밀번호가 올바르지 않습니다."),
 }
