@@ -10,16 +10,16 @@ import 'ui/view/chat_view.dart';
 import 'ui/view/main_view.dart';
 import 'ui/view/member_detail_view.dart';
 import 'ui/view/member_search_view.dart';
-import 'ui/view/profile_view.dart';
 import 'ui/view/ranking_view.dart';
 import 'ui/view/report_view.dart';
+import 'ui/view/setting_view.dart';
 
 /// 앱 라우트 경로 모음.
 abstract final class AppRoutes {
   static const main = '/main';
   static const chat = '/chat';
   static const ranking = '/ranking';
-  static const profile = '/profile';
+  static const setting = '/setting';
   static const member = 'member';
   static const report = 'report';
   static const search = 'search';
@@ -99,8 +99,8 @@ final GoRouter appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: AppRoutes.profile,
-              builder: (context, state) => const ProfileView(),
+              path: AppRoutes.setting,
+              builder: (context, state) => const SettingView(),
             ),
           ],
         ),

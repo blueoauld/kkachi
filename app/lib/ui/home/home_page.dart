@@ -63,9 +63,9 @@ class HomePage extends StatelessWidget {
                 BottomNavigationBarItem(
                   icon: Padding(
                     padding: EdgeInsets.only(top: 6),
-                    child: Icon(CupertinoIcons.person_fill),
+                    child: Icon(CupertinoIcons.settings_solid),
                   ),
-                  label: '프로필',
+                  label: '설정',
                 ),
               ],
             ),
