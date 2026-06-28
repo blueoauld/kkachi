@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/app_icon_button.dart';
 import '../widgets/setting_menu_sheet.dart';
@@ -9,17 +10,29 @@ class _SettingItem {
     required this.icon,
     required this.title,
     required this.color,
+    this.launchUri,
+    this.launchMode = LaunchMode.externalApplication,
   });
 
   final IconData icon;
   final String title;
   final Color color;
+
+  /// 항목을 탭했을 때 외부로 연결할 주소. (이메일/웹)
+  final Uri? launchUri;
+
+  /// 주소를 여는 방식. (외부 앱 / 앱 내부 브라우저)
+  final LaunchMode launchMode;
 }
 
 class SettingView extends StatelessWidget {
   const SettingView({super.key});
 
-  static const List<List<_SettingItem>> _sections = [
+  Future<void> _launch(Uri uri, LaunchMode mode) async {
+    await launchUrl(uri, mode: mode);
+  }
+
+  static final List<List<_SettingItem>> _sections = [
     [
       _SettingItem(
         icon: CupertinoIcons.person_crop_circle_fill,
@@ -66,21 +79,27 @@ class SettingView extends StatelessWidget {
         icon: CupertinoIcons.chat_bubble_2_fill,
         title: '문의사항',
         color: CupertinoColors.systemTeal,
+        launchUri: Uri(scheme: 'mailto', path: 'cs@kkachi.org'),
       ),
       _SettingItem(
         icon: CupertinoIcons.lightbulb_fill,
         title: '버그제보',
         color: CupertinoColors.systemYellow,
+        launchUri: Uri(scheme: 'mailto', path: 'cs@kkachi.org'),
       ),
       _SettingItem(
         icon: CupertinoIcons.doc_text_fill,
         title: '서비스 이용약관',
         color: CupertinoColors.systemBlue,
+        launchUri: Uri.parse('https://kkachi.org'),
+        launchMode: LaunchMode.inAppBrowserView,
       ),
       _SettingItem(
         icon: CupertinoIcons.shield_fill,
         title: '개인정보 취급방침',
         color: CupertinoColors.systemBrown,
+        launchUri: Uri.parse('https://kkachi.org'),
+        launchMode: LaunchMode.inAppBrowserView,
       ),
     ],
   ];
@@ -107,7 +126,7 @@ class SettingView extends StatelessWidget {
         bottom: false,
         child: ListView(
           padding: EdgeInsets.only(
-            bottom: 60 + MediaQuery.of(context).padding.bottom,
+            bottom: 12 + 60 + MediaQuery.of(context).padding.bottom,
           ),
           children: [
             for (final section in _sections)
@@ -141,7 +160,9 @@ class SettingView extends StatelessWidget {
                         ),
                       ),
                       title: Text(item.title),
-                      onTap: () {},
+                      onTap: item.launchUri == null
+                          ? () {}
+                          : () => _launch(item.launchUri!, item.launchMode),
                     ),
                 ],
               ),
