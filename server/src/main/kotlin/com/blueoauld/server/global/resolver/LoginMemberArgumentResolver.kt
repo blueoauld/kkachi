@@ -24,7 +24,12 @@ class LoginMemberArgumentResolver : HandlerMethodArgumentResolver {
         binderFactory: WebDataBinderFactory?,
     ): Any {
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)
-        return request?.getAttribute(JwtAuthenticationFilter.MEMBER_ID_ATTRIBUTE) as? Long
-            ?: throw BusinessException(ErrorCode.UNAUTHORIZED)
+
+        (request?.getAttribute(JwtAuthenticationFilter.MEMBER_ID_ATTRIBUTE) as? Long)?.let { return it }
+
+        if (request?.getAttribute(JwtAuthenticationFilter.TOKEN_EXPIRED_ATTRIBUTE) == true) {
+            throw BusinessException(ErrorCode.EXPIRED_TOKEN)
+        }
+        throw BusinessException(ErrorCode.UNAUTHORIZED)
     }
 }
