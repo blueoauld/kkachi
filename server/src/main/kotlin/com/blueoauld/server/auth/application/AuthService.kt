@@ -3,6 +3,8 @@ package com.blueoauld.server.auth.application
 import com.blueoauld.server.auth.application.port.SmsSender
 import com.blueoauld.server.auth.application.request.SendVerificationCodeRequest
 import com.blueoauld.server.auth.application.request.SignupRequest
+import com.blueoauld.server.global.exception.BusinessException
+import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.security.CodeGenerator
 import com.blueoauld.server.member.entity.Member
 import com.blueoauld.server.member.repository.MemberRepository
@@ -67,11 +69,11 @@ class AuthService(
     fun signup(request: SignupRequest) {
         verifyCode(request.phone, request.verificationCode)
 
-        require(request.password == request.passwordConfirm) {
-            "비밀번호가 일치하지 않습니다."
+        if (request.password != request.passwordConfirm) {
+            throw BusinessException(ErrorCode.PASSWORD_CONFIRM_MISMATCH)
         }
-        require(!memberRepository.existsByPhone(request.phone)) {
-            "이미 가입된 휴대폰 번호입니다."
+        if (memberRepository.existsByPhone(request.phone)) {
+            throw BusinessException(ErrorCode.ALREADY_REGISTERED_PHONE)
         }
 
         val member = Member(
@@ -86,12 +88,10 @@ class AuthService(
 
     private fun verifyCode(phone: String, verificationCode: String) {
         val savedCode = stringRedisTemplate.opsForValue().get(verificationCodeKey(phone))
+            ?: throw BusinessException(ErrorCode.VERIFICATION_CODE_NOT_FOUND)
 
-        requireNotNull(savedCode) {
-            "인증 번호가 만료되었거나 발송되지 않았습니다."
-        }
-        require(savedCode == verificationCode) {
-            "인증 번호가 일치하지 않습니다."
+        if (savedCode != verificationCode) {
+            throw BusinessException(ErrorCode.VERIFICATION_CODE_MISMATCH)
         }
     }
 
@@ -105,8 +105,8 @@ class AuthService(
             DAILY_SEND_COUNT_TTL.seconds.toString(),
         ) ?: 1L
 
-        require(count <= MAX_DAILY_SEND_COUNT) {
-            "인증 번호 발송 횟수를 초과했습니다."
+        if (count > MAX_DAILY_SEND_COUNT) {
+            throw BusinessException(ErrorCode.DAILY_SEND_COUNT_EXCEEDED)
         }
     }
 }
