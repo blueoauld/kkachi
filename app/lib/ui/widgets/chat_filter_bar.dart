@@ -1,5 +1,9 @@
+import 'package:app/ui/adaptive/adaptive_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 
+/// 전체 / 안읽음 채팅 필터 세그먼트 컨트롤.
+///
+/// value — 0: 전체, 1: 안읽음
 class ChatFilterBar extends StatelessWidget {
   const ChatFilterBar({
     super.key,
@@ -12,27 +16,10 @@ class ChatFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: SizedBox(
-        width: double.infinity,
-        child: CupertinoSlidingSegmentedControl<int>(
-          groupValue: value,
-          onValueChanged: (v) {
-            if (v != null) onChanged(v);
-          },
-          children: const {
-            0: Padding(
-              padding: EdgeInsets.symmetric(vertical: 6),
-              child: Text('전체'),
-            ),
-            1: Padding(
-              padding: EdgeInsets.symmetric(vertical: 6),
-              child: Text('안읽음'),
-            ),
-          },
-        ),
-      ),
+    return AdaptiveSegmentedControl(
+      value: value,
+      onChanged: onChanged,
+      labels: const {0: '전체', 1: '안읽음'},
     );
   }
 }
