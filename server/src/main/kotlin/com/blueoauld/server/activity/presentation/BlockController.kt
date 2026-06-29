@@ -1,14 +1,12 @@
 package com.blueoauld.server.activity.presentation
 
 import com.blueoauld.server.activity.application.BlockService
+import com.blueoauld.server.activity.application.response.BlockResponse
 import com.blueoauld.server.global.resolver.LoginMember
+import com.blueoauld.server.global.response.CursorResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api")
 @RestController
@@ -33,5 +31,15 @@ class BlockController(
     ): ResponseEntity<Unit> {
         blockService.unblock(memberId, blockedId)
         return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/v1/blocks")
+    fun getBlocks(
+        @LoginMember memberId: Long,
+        @RequestParam(required = false) cursor: Long?,
+        @RequestParam(defaultValue = "20") size: Int,
+    ): ResponseEntity<CursorResponse<BlockResponse>> {
+        val response = blockService.getBlocks(memberId, cursor, size)
+        return ResponseEntity.ok(response)
     }
 }
