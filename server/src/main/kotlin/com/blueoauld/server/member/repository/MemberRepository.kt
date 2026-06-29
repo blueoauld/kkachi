@@ -65,6 +65,38 @@ interface MemberRepository : JpaRepository<Member, Long> {
         @Param("viewerId") viewerId: Long,
         @Param("memberIds") memberIds: Collection<Long>,
     ): List<MemberDistanceProjection>
+
+    @Query(
+        value = """
+            SELECT m.*
+            FROM member m, member viewer
+            WHERE viewer.id = :viewerId
+              AND m.id <> :viewerId
+              AND m.deleted_at IS NULL
+              AND m.location IS NOT NULL
+              AND viewer.location IS NOT NULL
+              AND (:gender IS NULL OR m.gender = :gender)
+              AND NOT EXISTS (
+                SELECT 1 FROM block b
+                WHERE (b.blocker_id = :viewerId AND b.blocked_id = m.id)
+                   OR (b.blocker_id = m.id AND b.blocked_id = :viewerId)
+              )
+              AND (
+                :cursorDistance IS NULL
+                OR ST_Distance(viewer.location, m.location) > :cursorDistance
+                OR (ST_Distance(viewer.location, m.location) = :cursorDistance AND m.id > :cursorId)
+              )
+            ORDER BY ST_Distance(viewer.location, m.location) ASC, m.id ASC
+        """,
+        nativeQuery = true,
+    )
+    fun findMembersByDistance(
+        @Param("viewerId") viewerId: Long,
+        @Param("gender") gender: String?,
+        @Param("cursorDistance") cursorDistance: Double?,
+        @Param("cursorId") cursorId: Long?,
+        pageable: Pageable,
+    ): List<Member>
 }
 
 interface MemberDistanceProjection {

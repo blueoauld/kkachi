@@ -2,6 +2,7 @@ package com.blueoauld.server.member.presentation
 
 import com.blueoauld.server.global.resolver.LoginMember
 import com.blueoauld.server.member.application.MemberService
+import com.blueoauld.server.member.application.MemberSortType
 import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
@@ -24,10 +25,11 @@ class MemberController(
     fun getMembers(
         @LoginMember memberId: Long,
         @RequestParam(required = false) gender: GenderType?,
+        @RequestParam(defaultValue = "RECENT") sort: MemberSortType,
         @RequestParam(required = false) cursor: String?,
         @RequestParam(defaultValue = "20") size: Int,
     ): ResponseEntity<MemberCursorResponse> {
-        val response = memberService.getMembers(memberId, gender, cursor, size)
+        val response = memberService.getMembers(memberId, gender, sort, cursor, size)
         return ResponseEntity.ok(response)
     }
 

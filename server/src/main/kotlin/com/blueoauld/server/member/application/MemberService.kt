@@ -132,15 +132,32 @@ class MemberService(
     }
 
     @Transactional(readOnly = true)
-    fun getMembers(viewerId: Long, gender: GenderType?, cursor: String?, size: Int): MemberCursorResponse {
-        val decodedCursor = cursor?.let(::decodeCursor)
-        val members = memberRepository.findMembers(
-            viewerId = viewerId,
-            gender = gender,
-            cursorUpdatedAt = decodedCursor?.first,
-            cursorId = decodedCursor?.second,
-            pageable = PageRequest.of(0, size + 1),
-        )
+    fun getMembers(
+        viewerId: Long,
+        gender: GenderType?,
+        sort: MemberSortType,
+        cursor: String?,
+        size: Int,
+    ): MemberCursorResponse {
+        val pageable = PageRequest.of(0, size + 1)
+        val members = when (sort) {
+            MemberSortType.RECENT -> {
+                val decoded = cursor?.let(::decodeRecentCursor)
+                memberRepository.findMembers(viewerId, gender, decoded?.first, decoded?.second, pageable)
+            }
+
+            MemberSortType.DISTANCE -> {
+                val decoded = cursor?.let(::decodeDistanceCursor)
+                memberRepository.findMembersByDistance(
+                    viewerId,
+                    gender?.name,
+                    decoded?.first,
+                    decoded?.second,
+                    pageable
+                )
+            }
+        }
+
         val hasNext = members.size > size
         val pageMembers = if (hasNext) members.take(size) else members
         val memberIds = pageMembers.map { it.id }
@@ -173,18 +190,36 @@ class MemberService(
                 distance = distanceByMemberId[member.id],
             )
         }
-        val nextCursor = if (hasNext) pageMembers.last().let { encodeCursor(it.updatedAt, it.id) } else null
+
+        val nextCursor = if (!hasNext) {
+            null
+        } else {
+            val last = pageMembers.last()
+            when (sort) {
+                MemberSortType.RECENT -> encodeRecentCursor(last.updatedAt, last.id)
+                MemberSortType.DISTANCE -> encodeDistanceCursor(distanceByMemberId.getValue(last.id)!!, last.id)
+            }
+        }
 
         return MemberCursorResponse(items, nextCursor, hasNext)
     }
 
-    private fun encodeCursor(updatedAt: Instant, id: Long): String =
+    private fun encodeRecentCursor(updatedAt: Instant, id: Long): String =
         Base64.getUrlEncoder().encodeToString("$updatedAt|$id".toByteArray())
 
-    private fun decodeCursor(cursor: String): Pair<Instant, Long> {
+    private fun decodeRecentCursor(cursor: String): Pair<Instant, Long> {
         val decoded = String(Base64.getUrlDecoder().decode(cursor))
         val (updatedAt, id) = decoded.split("|", limit = 2)
         return Instant.parse(updatedAt) to id.toLong()
+    }
+
+    private fun encodeDistanceCursor(distance: Double, id: Long): String =
+        Base64.getUrlEncoder().encodeToString("$distance|$id".toByteArray())
+
+    private fun decodeDistanceCursor(cursor: String): Pair<Double, Long> {
+        val decoded = String(Base64.getUrlDecoder().decode(cursor))
+        val (distance, id) = decoded.split("|", limit = 2)
+        return distance.toDouble() to id.toLong()
     }
 
     private fun validateBirthYear(birthYear: Int) {
