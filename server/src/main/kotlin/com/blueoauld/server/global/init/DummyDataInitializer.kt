@@ -1,6 +1,5 @@
 package com.blueoauld.server.global.init
 
-import com.blueoauld.server.activity.entity.Block
 import com.blueoauld.server.activity.entity.Favorite
 import com.blueoauld.server.activity.entity.Heart
 import com.blueoauld.server.activity.entity.SecretImageAccess
@@ -74,9 +73,6 @@ class DummyDataInitializer(
         val favoritesAsTarget = savedMembers.drop(1).map { Favorite(ownerId = it.id, targetId = receiver.id) }
         val favoritesAsOwner = savedMembers.drop(1).map { Favorite(ownerId = receiver.id, targetId = it.id) }
         favoriteRepository.saveAll(favoritesAsTarget + favoritesAsOwner)
-
-        val blocks = savedMembers.drop(1).map { Block(blockerId = receiver.id, blockedId = it.id) }
-        blockRepository.saveAll(blocks)
 
         val secretImageViewers = savedMembers.drop(1).map { SecretImageAccess(ownerId = receiver.id, viewerId = it.id) }
         val secretImageOwners = savedMembers.drop(1).map { SecretImageAccess(ownerId = it.id, viewerId = receiver.id) }
