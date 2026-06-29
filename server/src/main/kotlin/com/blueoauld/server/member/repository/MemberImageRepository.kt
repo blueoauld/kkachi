@@ -10,11 +10,5 @@ interface MemberImageRepository : JpaRepository<MemberImage, Long> {
 
     fun countByMemberIdAndType(memberId: Long, type: ImageType): Long
 
-    fun findByMemberIdInAndTypeAndDisplayOrder(
-        memberIds: Collection<Long>,
-        type: ImageType,
-        displayOrder: Int,
-    ): List<MemberImage>
-
     fun existsByObjectKey(objectKey: String): Boolean
 }

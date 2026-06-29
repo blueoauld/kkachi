@@ -11,11 +11,8 @@ import com.blueoauld.server.global.util.AgeCalculator
 import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
-import com.blueoauld.server.member.application.response.MemberCursorResponse
-import com.blueoauld.server.member.application.response.MemberListResponse
 import com.blueoauld.server.member.application.response.MemberProfileResponse
 import com.blueoauld.server.member.application.response.MyProfileResponse
-import com.blueoauld.server.member.entity.type.GenderType
 import com.blueoauld.server.member.entity.type.ImageType
 import com.blueoauld.server.member.repository.MemberImageRepository
 import com.blueoauld.server.member.repository.MemberRepository
@@ -23,12 +20,9 @@ import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.PrecisionModel
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Instant
-import java.util.*
 
 @Service
 class MemberService(
@@ -127,96 +121,6 @@ class MemberService(
             blocked = blockRepository.existsByBlockerIdAndBlockedId(viewerId, targetId),
             publicImageUrls = publicImageUrls,
         )
-    }
-
-    @Transactional(readOnly = true)
-    fun getMembers(
-        viewerId: Long,
-        gender: GenderType?,
-        sort: MemberSortType,
-        cursor: String?,
-        size: Int,
-    ): MemberCursorResponse {
-        val pageable = PageRequest.of(0, size + 1)
-        val members = when (sort) {
-            MemberSortType.RECENT -> {
-                val decoded = cursor?.let(::decodeRecentCursor)
-                memberRepository.findMembers(viewerId, gender, decoded?.first, decoded?.second, pageable)
-            }
-
-            MemberSortType.DISTANCE -> {
-                val decoded = cursor?.let(::decodeDistanceCursor)
-                memberRepository.findMembersByDistance(
-                    viewerId,
-                    gender?.name,
-                    decoded?.first,
-                    decoded?.second,
-                    pageable
-                )
-            }
-        }
-
-        val hasNext = members.size > size
-        val pageMembers = if (hasNext) members.take(size) else members
-        val memberIds = pageMembers.map { it.id }
-
-        if (memberIds.isEmpty()) {
-            return MemberCursorResponse(emptyList(), null, false)
-        }
-
-        val heartCountByMemberId = heartRepository.countByReceiverIds(memberIds)
-            .associate { it.memberId to it.count }
-        val distanceByMemberId = memberRepository.findDistances(viewerId, memberIds)
-            .associate { it.id to it.distance }
-        val representativeImageByMemberId = memberImageRepository
-            .findByMemberIdInAndTypeAndDisplayOrder(memberIds, ImageType.PUBLIC, 0)
-            .associateBy { it.memberId }
-
-        val items = pageMembers.map { member ->
-            MemberListResponse(
-                memberId = member.id,
-                profileImageUrl = representativeImageByMemberId[member.id]?.let {
-                    imageStorage.generatePresignedDownloadUrl(it.objectKey)
-                },
-                nickname = member.nickname,
-                age = AgeCalculator.fromBirthYear(member.birthYear),
-                gender = member.gender,
-                heartCount = heartCountByMemberId[member.id] ?: 0,
-                comment = member.comment,
-                updatedAt = member.updatedAt,
-                distance = distanceByMemberId[member.id],
-            )
-        }
-
-        val nextCursor = if (!hasNext) {
-            null
-        } else {
-            val last = pageMembers.last()
-            when (sort) {
-                MemberSortType.RECENT -> encodeRecentCursor(last.updatedAt, last.id)
-                MemberSortType.DISTANCE -> encodeDistanceCursor(distanceByMemberId.getValue(last.id)!!, last.id)
-            }
-        }
-
-        return MemberCursorResponse(items, nextCursor, hasNext)
-    }
-
-    private fun encodeRecentCursor(updatedAt: Instant, id: Long): String =
-        Base64.getUrlEncoder().encodeToString("$updatedAt|$id".toByteArray())
-
-    private fun decodeRecentCursor(cursor: String): Pair<Instant, Long> {
-        val decoded = String(Base64.getUrlDecoder().decode(cursor))
-        val (updatedAt, id) = decoded.split("|", limit = 2)
-        return Instant.parse(updatedAt) to id.toLong()
-    }
-
-    private fun encodeDistanceCursor(distance: Double, id: Long): String =
-        Base64.getUrlEncoder().encodeToString("$distance|$id".toByteArray())
-
-    private fun decodeDistanceCursor(cursor: String): Pair<Double, Long> {
-        val decoded = String(Base64.getUrlDecoder().decode(cursor))
-        val (distance, id) = decoded.split("|", limit = 2)
-        return distance.toDouble() to id.toLong()
     }
 
     private fun validateBirthYear(birthYear: Int) {
