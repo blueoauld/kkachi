@@ -40,6 +40,10 @@ enum class ErrorCode(
     CANNOT_FAVORITE_SELF(HttpStatus.BAD_REQUEST, "자기 자신을 즐겨찾기할 수 없습니다."),
     ALREADY_FAVORITED(HttpStatus.CONFLICT, "이미 즐겨찾기한 회원입니다."),
 
+    // 비밀 사진 공개
+    CANNOT_OPEN_SECRET_IMAGE_TO_SELF(HttpStatus.BAD_REQUEST, "자기 자신에게 비밀 사진을 공개할 수 없습니다."),
+    ALREADY_OPENED_SECRET_IMAGE(HttpStatus.CONFLICT, "이미 비밀 사진을 공개한 회원입니다."),
+
     // 로그인
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "휴대폰 번호 또는 비밀번호가 올바르지 않습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
