@@ -53,12 +53,8 @@ class BlockService(
     @Transactional(readOnly = true)
     fun getBlocks(blockerId: Long, cursor: Long?, size: Int): CursorResponse<BlockResponse> {
         val results = blockRepository.findBlocks(blockerId, cursor, size + 1)
-        val hasNext = results.size > size
-        val items = if (hasNext) results.dropLast(1) else results
-        val nextCursor = if (hasNext) items.last().id else null
-
         val currentYear = Year.now(KST).value
-        val responses = items.map { block ->
+        return CursorResponse.of(results, size, { it.id }) { block ->
             BlockResponse(
                 blockId = block.id,
                 memberId = block.memberId,
@@ -71,11 +67,5 @@ class BlockService(
                 comment = block.comment
             )
         }
-
-        return CursorResponse(
-            items = responses,
-            nextCursor = nextCursor,
-            hasNext = hasNext,
-        )
     }
 }

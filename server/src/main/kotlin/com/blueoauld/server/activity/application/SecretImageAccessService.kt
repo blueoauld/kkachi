@@ -3,6 +3,7 @@ package com.blueoauld.server.activity.application
 import com.blueoauld.server.activity.application.response.SecretImageAccessResponse
 import com.blueoauld.server.activity.entity.SecretImageAccess
 import com.blueoauld.server.activity.repository.SecretImageAccessRepository
+import com.blueoauld.server.activity.repository.result.ActivityResult
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.response.CursorResponse
@@ -53,41 +54,18 @@ class SecretImageAccessService(
     @Transactional(readOnly = true)
     fun getSecretImageViewers(ownerId: Long, cursor: Long?, size: Int): CursorResponse<SecretImageAccessResponse> {
         val results = secretImageAccessRepository.findSecretImageViewers(ownerId, cursor, size + 1)
-        val hasNext = results.size > size
-        val items = if (hasNext) results.dropLast(1) else results
-        val nextCursor = if (hasNext) items.last().id else null
-
-        val currentYear = Year.now(KST).value
-        val responses = items.map { access ->
-            SecretImageAccessResponse(
-                accessId = access.id,
-                memberId = access.memberId,
-                profileImageUrl = access.objectKey?.let {
-                    imageStorage.generatePresignedDownloadUrl(it)
-                },
-                nickname = access.nickname,
-                gender = access.gender,
-                age = currentYear - access.birthYear,
-                comment = access.comment
-            )
-        }
-
-        return CursorResponse(
-            items = responses,
-            nextCursor = nextCursor,
-            hasNext = hasNext,
-        )
+        return toCursorResponse(results, size)
     }
 
     @Transactional(readOnly = true)
     fun getSecretImageOwners(viewerId: Long, cursor: Long?, size: Int): CursorResponse<SecretImageAccessResponse> {
         val results = secretImageAccessRepository.findSecretImageOwners(viewerId, cursor, size + 1)
-        val hasNext = results.size > size
-        val items = if (hasNext) results.dropLast(1) else results
-        val nextCursor = if (hasNext) items.last().id else null
+        return toCursorResponse(results, size)
+    }
 
+    private fun toCursorResponse(results: List<ActivityResult>, size: Int): CursorResponse<SecretImageAccessResponse> {
         val currentYear = Year.now(KST).value
-        val responses = items.map { access ->
+        return CursorResponse.of(results, size, { it.id }) { access ->
             SecretImageAccessResponse(
                 accessId = access.id,
                 memberId = access.memberId,
@@ -100,11 +78,5 @@ class SecretImageAccessService(
                 comment = access.comment
             )
         }
-
-        return CursorResponse(
-            items = responses,
-            nextCursor = nextCursor,
-            hasNext = hasNext,
-        )
     }
 }

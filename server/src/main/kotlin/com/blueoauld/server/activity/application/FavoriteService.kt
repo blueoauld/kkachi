@@ -3,6 +3,7 @@ package com.blueoauld.server.activity.application
 import com.blueoauld.server.activity.application.response.FavoriteResponse
 import com.blueoauld.server.activity.entity.Favorite
 import com.blueoauld.server.activity.repository.FavoriteRepository
+import com.blueoauld.server.activity.repository.result.ActivityResult
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.response.CursorResponse
@@ -53,41 +54,18 @@ class FavoriteService(
     @Transactional(readOnly = true)
     fun getSentFavorites(ownerId: Long, cursor: Long?, size: Int): CursorResponse<FavoriteResponse> {
         val results = favoriteRepository.findSentFavorites(ownerId, cursor, size + 1)
-        val hasNext = results.size > size
-        val items = if (hasNext) results.dropLast(1) else results
-        val nextCursor = if (hasNext) items.last().id else null
-
-        val currentYear = Year.now(KST).value
-        val responses = items.map { favorite ->
-            FavoriteResponse(
-                favoriteId = favorite.id,
-                memberId = favorite.memberId,
-                profileImageUrl = favorite.objectKey?.let {
-                    imageStorage.generatePresignedDownloadUrl(it)
-                },
-                nickname = favorite.nickname,
-                gender = favorite.gender,
-                age = currentYear - favorite.birthYear,
-                comment = favorite.comment
-            )
-        }
-
-        return CursorResponse(
-            items = responses,
-            nextCursor = nextCursor,
-            hasNext = hasNext,
-        )
+        return toCursorResponse(results, size)
     }
 
     @Transactional(readOnly = true)
     fun getReceivedFavorites(targetId: Long, cursor: Long?, size: Int): CursorResponse<FavoriteResponse> {
         val results = favoriteRepository.findReceivedFavorites(targetId, cursor, size + 1)
-        val hasNext = results.size > size
-        val items = if (hasNext) results.dropLast(1) else results
-        val nextCursor = if (hasNext) items.last().id else null
+        return toCursorResponse(results, size)
+    }
 
+    private fun toCursorResponse(results: List<ActivityResult>, size: Int): CursorResponse<FavoriteResponse> {
         val currentYear = Year.now(KST).value
-        val responses = items.map { favorite ->
+        return CursorResponse.of(results, size, { it.id }) { favorite ->
             FavoriteResponse(
                 favoriteId = favorite.id,
                 memberId = favorite.memberId,
@@ -100,11 +78,5 @@ class FavoriteService(
                 comment = favorite.comment
             )
         }
-
-        return CursorResponse(
-            items = responses,
-            nextCursor = nextCursor,
-            hasNext = hasNext,
-        )
     }
 }
