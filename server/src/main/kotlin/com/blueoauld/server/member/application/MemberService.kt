@@ -7,6 +7,7 @@ import com.blueoauld.server.activity.repository.SecretImageAccessRepository
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.storage.ImageStorage
+import com.blueoauld.server.global.util.AgeCalculator
 import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
@@ -27,8 +28,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import java.time.Year
-import java.time.ZoneId
 import java.util.*
 
 @Service
@@ -44,7 +43,6 @@ class MemberService(
 ) {
 
     companion object {
-        private val KST = ZoneId.of("Asia/Seoul")
         private const val MIN_AGE = 19
         private const val MAX_AGE = 50
 
@@ -98,7 +96,7 @@ class MemberService(
             memberId = member.id,
             nickname = member.nickname,
             gender = member.gender,
-            age = Year.now(KST).value - member.birthYear,
+            age = AgeCalculator.fromBirthYear(member.birthYear),
             bio = member.bio,
             heartCount = heartRepository.countByReceiverId(memberId),
             publicImageUrls = publicImageUrls,
@@ -117,7 +115,7 @@ class MemberService(
             memberId = target.id,
             nickname = target.nickname,
             gender = target.gender,
-            age = Year.now(KST).value - target.birthYear,
+            age = AgeCalculator.fromBirthYear(target.birthYear),
             heartCount = heartRepository.countByReceiverId(targetId),
             updatedAt = target.updatedAt,
             distance = memberRepository.calculateDistanceMeters(viewerId, targetId),
@@ -174,7 +172,6 @@ class MemberService(
             .findByMemberIdInAndTypeAndDisplayOrder(memberIds, ImageType.PUBLIC, 0)
             .associateBy { it.memberId }
 
-        val currentYear = Year.now(KST).value
         val items = pageMembers.map { member ->
             MemberListResponse(
                 memberId = member.id,
@@ -182,7 +179,7 @@ class MemberService(
                     imageStorage.generatePresignedDownloadUrl(it.objectKey)
                 },
                 nickname = member.nickname,
-                age = currentYear - member.birthYear,
+                age = AgeCalculator.fromBirthYear(member.birthYear),
                 gender = member.gender,
                 heartCount = heartCountByMemberId[member.id] ?: 0,
                 comment = member.comment,
@@ -223,7 +220,7 @@ class MemberService(
     }
 
     private fun validateBirthYear(birthYear: Int) {
-        val age = Year.now(KST).value - birthYear
+        val age = AgeCalculator.fromBirthYear(birthYear)
         if (age !in MIN_AGE..MAX_AGE) {
             throw BusinessException(ErrorCode.INVALID_BIRTH_YEAR)
         }

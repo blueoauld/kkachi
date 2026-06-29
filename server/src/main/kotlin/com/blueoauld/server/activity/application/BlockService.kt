@@ -7,11 +7,10 @@ import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.response.CursorResponse
 import com.blueoauld.server.global.storage.ImageStorage
+import com.blueoauld.server.global.util.AgeCalculator
 import com.blueoauld.server.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Year
-import java.time.ZoneId
 
 @Service
 class BlockService(
@@ -20,10 +19,6 @@ class BlockService(
     private val memberRepository: MemberRepository,
     private val imageStorage: ImageStorage
 ) {
-
-    companion object {
-        private val KST = ZoneId.of("Asia/Seoul")
-    }
 
     @Transactional
     fun block(blockerId: Long, blockedId: Long) {
@@ -53,7 +48,6 @@ class BlockService(
     @Transactional(readOnly = true)
     fun getBlocks(blockerId: Long, cursor: Long?, size: Int): CursorResponse<BlockResponse> {
         val results = blockRepository.findBlocks(blockerId, cursor, size + 1)
-        val currentYear = Year.now(KST).value
         return CursorResponse.of(results, size, { it.id }) { block ->
             BlockResponse(
                 blockId = block.id,
@@ -63,7 +57,7 @@ class BlockService(
                 },
                 nickname = block.nickname,
                 gender = block.gender,
-                age = currentYear - block.birthYear,
+                age = AgeCalculator.fromBirthYear(block.birthYear),
                 comment = block.comment
             )
         }

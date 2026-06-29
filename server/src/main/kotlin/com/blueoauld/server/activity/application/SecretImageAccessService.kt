@@ -8,11 +8,10 @@ import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.response.CursorResponse
 import com.blueoauld.server.global.storage.ImageStorage
+import com.blueoauld.server.global.util.AgeCalculator
 import com.blueoauld.server.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Year
-import java.time.ZoneId
 
 @Service
 class SecretImageAccessService(
@@ -21,10 +20,6 @@ class SecretImageAccessService(
     private val memberRepository: MemberRepository,
     private val imageStorage: ImageStorage,
 ) {
-
-    companion object {
-        private val KST = ZoneId.of("Asia/Seoul")
-    }
 
     @Transactional
     fun openSecretImage(ownerId: Long, viewerId: Long) {
@@ -64,7 +59,6 @@ class SecretImageAccessService(
     }
 
     private fun toCursorResponse(results: List<ActivityResult>, size: Int): CursorResponse<SecretImageAccessResponse> {
-        val currentYear = Year.now(KST).value
         return CursorResponse.of(results, size, { it.id }) { access ->
             SecretImageAccessResponse(
                 accessId = access.id,
@@ -74,7 +68,7 @@ class SecretImageAccessService(
                 },
                 nickname = access.nickname,
                 gender = access.gender,
-                age = currentYear - access.birthYear,
+                age = AgeCalculator.fromBirthYear(access.birthYear),
                 comment = access.comment
             )
         }
