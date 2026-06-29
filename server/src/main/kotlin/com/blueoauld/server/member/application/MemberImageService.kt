@@ -25,7 +25,7 @@ class MemberImageService(
 
     companion object {
         private const val MAX_IMAGE_SIZE = 20L * 1024 * 1024 // 20MB
-        private const val TMP_KEY_PREFIX = "tmp/"
+        private const val TMP_KEY_PREFIX = "tmp/members/"
 
         private val ALLOWED_CONTENT_TYPES = mapOf(
             "image/jpeg" to "jpg",

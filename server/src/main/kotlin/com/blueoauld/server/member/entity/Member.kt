@@ -20,7 +20,7 @@ class Member(
 
     @Convert(converter = PhoneAttributeConverter::class)
     @Column(name = "phone", length = 100, unique = true, nullable = false)
-    private val phone: String,
+    val phone: String,
 
     @Column(name = "nickname", length = 10, unique = true, nullable = false)
     var nickname: String = "닉네임_" + UUID.randomUUID().toString().take(6),
