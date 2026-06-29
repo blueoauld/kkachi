@@ -28,4 +28,19 @@ interface HeartRepository : JpaRepository<Heart, Long> {
         @Param("cursor") cursor: Long?,
         pageable: Pageable,
     ): List<Heart>
+
+    @Query(
+        """
+        SELECT h
+        FROM Heart h
+        WHERE h.receiverId = :receiverId
+          AND (:cursor IS NULL OR h.id < :cursor)
+        ORDER BY h.id DESC
+        """,
+    )
+    fun findReceivedHearts(
+        @Param("receiverId") receiverId: Long,
+        @Param("cursor") cursor: Long?,
+        pageable: Pageable,
+    ): List<Heart>
 }

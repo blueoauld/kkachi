@@ -26,4 +26,19 @@ interface SecretImageAccessRepository : JpaRepository<SecretImageAccess, Long> {
         @Param("cursor") cursor: Long?,
         pageable: Pageable,
     ): List<SecretImageAccess>
+
+    @Query(
+        """
+        SELECT s
+        FROM SecretImageAccess s
+        WHERE s.viewerId = :viewerId
+          AND (:cursor IS NULL OR s.id < :cursor)
+        ORDER BY s.id DESC
+        """,
+    )
+    fun findByViewerId(
+        @Param("viewerId") viewerId: Long,
+        @Param("cursor") cursor: Long?,
+        pageable: Pageable,
+    ): List<SecretImageAccess>
 }

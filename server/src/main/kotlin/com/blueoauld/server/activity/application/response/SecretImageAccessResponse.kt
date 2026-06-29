@@ -2,9 +2,9 @@ package com.blueoauld.server.activity.application.response
 
 import com.blueoauld.server.member.entity.type.GenderType
 
-data class SentFavoriteResponse(
+data class SecretImageAccessResponse(
 
-    val favoriteId: Long,
+    val accessId: Long,
     val memberId: Long,
     val profileImageUrl: String?,
     val nickname: String,

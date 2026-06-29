@@ -1,6 +1,6 @@
 package com.blueoauld.server.activity.application
 
-import com.blueoauld.server.activity.application.response.SentHeartResponse
+import com.blueoauld.server.activity.application.response.HeartResponse
 import com.blueoauld.server.activity.entity.Heart
 import com.blueoauld.server.activity.repository.HeartRepository
 import com.blueoauld.server.global.exception.BusinessException
@@ -46,13 +46,33 @@ class HeartService(
     }
 
     @Transactional(readOnly = true)
-    fun getSentHearts(senderId: Long, cursor: Long?, size: Int): CursorResponse<SentHeartResponse> {
+    fun getSentHearts(senderId: Long, cursor: Long?, size: Int): CursorResponse<HeartResponse> {
         val hearts = heartRepository.findSentHearts(senderId, cursor, PageRequest.of(0, size + 1))
         val cardByMemberId = memberCardReader.readByIds(hearts.map { it.receiverId })
 
         return CursorResponse.of(hearts, size, { it.id }) { heart ->
             cardByMemberId[heart.receiverId]?.let { card ->
-                SentHeartResponse(
+                HeartResponse(
+                    heartId = heart.id,
+                    memberId = card.memberId,
+                    profileImageUrl = card.profileImageUrl,
+                    nickname = card.nickname,
+                    gender = card.gender,
+                    age = card.age,
+                    comment = card.comment,
+                )
+            }
+        }
+    }
+
+    @Transactional(readOnly = true)
+    fun getReceivedHearts(receiverId: Long, cursor: Long?, size: Int): CursorResponse<HeartResponse> {
+        val hearts = heartRepository.findReceivedHearts(receiverId, cursor, PageRequest.of(0, size + 1))
+        val cardByMemberId = memberCardReader.readByIds(hearts.map { it.senderId })
+
+        return CursorResponse.of(hearts, size, { it.id }) { heart ->
+            cardByMemberId[heart.senderId]?.let { card ->
+                HeartResponse(
                     heartId = heart.id,
                     memberId = card.memberId,
                     profileImageUrl = card.profileImageUrl,

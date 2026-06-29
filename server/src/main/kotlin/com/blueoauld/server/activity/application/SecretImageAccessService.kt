@@ -1,6 +1,6 @@
 package com.blueoauld.server.activity.application
 
-import com.blueoauld.server.activity.application.response.SecretImageViewerResponse
+import com.blueoauld.server.activity.application.response.SecretImageAccessResponse
 import com.blueoauld.server.activity.entity.SecretImageAccess
 import com.blueoauld.server.activity.repository.SecretImageAccessRepository
 import com.blueoauld.server.global.exception.BusinessException
@@ -46,13 +46,33 @@ class SecretImageAccessService(
     }
 
     @Transactional(readOnly = true)
-    fun getSecretImageViewers(ownerId: Long, cursor: Long?, size: Int): CursorResponse<SecretImageViewerResponse> {
+    fun getSecretImageViewers(ownerId: Long, cursor: Long?, size: Int): CursorResponse<SecretImageAccessResponse> {
         val accesses = secretImageAccessRepository.findByOwnerId(ownerId, cursor, PageRequest.of(0, size + 1))
         val cardByMemberId = memberCardReader.readByIds(accesses.map { it.viewerId })
 
         return CursorResponse.of(accesses, size, { it.id }) { access ->
             cardByMemberId[access.viewerId]?.let { card ->
-                SecretImageViewerResponse(
+                SecretImageAccessResponse(
+                    accessId = access.id,
+                    memberId = card.memberId,
+                    profileImageUrl = card.profileImageUrl,
+                    nickname = card.nickname,
+                    gender = card.gender,
+                    age = card.age,
+                    comment = card.comment,
+                )
+            }
+        }
+    }
+
+    @Transactional(readOnly = true)
+    fun getSecretImageOwners(viewerId: Long, cursor: Long?, size: Int): CursorResponse<SecretImageAccessResponse> {
+        val accesses = secretImageAccessRepository.findByViewerId(viewerId, cursor, PageRequest.of(0, size + 1))
+        val cardByMemberId = memberCardReader.readByIds(accesses.map { it.ownerId })
+
+        return CursorResponse.of(accesses, size, { it.id }) { access ->
+            cardByMemberId[access.ownerId]?.let { card ->
+                SecretImageAccessResponse(
                     accessId = access.id,
                     memberId = card.memberId,
                     profileImageUrl = card.profileImageUrl,

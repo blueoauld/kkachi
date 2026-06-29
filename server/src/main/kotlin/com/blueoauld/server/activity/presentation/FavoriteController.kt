@@ -1,7 +1,7 @@
 package com.blueoauld.server.activity.presentation
 
 import com.blueoauld.server.activity.application.FavoriteService
-import com.blueoauld.server.activity.application.response.SentFavoriteResponse
+import com.blueoauld.server.activity.application.response.FavoriteResponse
 import com.blueoauld.server.global.resolver.LoginMember
 import com.blueoauld.server.global.response.CursorResponse
 import org.springframework.http.HttpStatus
@@ -38,8 +38,18 @@ class FavoriteController(
         @LoginMember memberId: Long,
         @RequestParam(required = false) cursor: Long?,
         @RequestParam(defaultValue = "20") size: Int,
-    ): ResponseEntity<CursorResponse<SentFavoriteResponse>> {
+    ): ResponseEntity<CursorResponse<FavoriteResponse>> {
         val response = favoriteService.getSentFavorites(memberId, cursor, size)
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/v1/favorites/received")
+    fun getReceivedFavorites(
+        @LoginMember memberId: Long,
+        @RequestParam(required = false) cursor: Long?,
+        @RequestParam(defaultValue = "20") size: Int,
+    ): ResponseEntity<CursorResponse<FavoriteResponse>> {
+        val response = favoriteService.getReceivedFavorites(memberId, cursor, size)
         return ResponseEntity.ok(response)
     }
 }

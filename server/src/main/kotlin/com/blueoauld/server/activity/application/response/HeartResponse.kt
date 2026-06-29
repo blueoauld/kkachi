@@ -2,7 +2,7 @@ package com.blueoauld.server.activity.application.response
 
 import com.blueoauld.server.member.entity.type.GenderType
 
-data class SentHeartResponse(
+data class HeartResponse(
 
     val heartId: Long,
     val memberId: Long,

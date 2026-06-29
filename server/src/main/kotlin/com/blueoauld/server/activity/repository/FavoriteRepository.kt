@@ -26,4 +26,19 @@ interface FavoriteRepository : JpaRepository<Favorite, Long> {
         @Param("cursor") cursor: Long?,
         pageable: Pageable,
     ): List<Favorite>
+
+    @Query(
+        """
+        SELECT f
+        FROM Favorite f
+        WHERE f.targetId = :targetId
+          AND (:cursor IS NULL OR f.id < :cursor)
+        ORDER BY f.id DESC
+        """,
+    )
+    fun findReceivedFavorites(
+        @Param("targetId") targetId: Long,
+        @Param("cursor") cursor: Long?,
+        pageable: Pageable,
+    ): List<Favorite>
 }
