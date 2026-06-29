@@ -197,24 +197,6 @@ class MemberService(
         return MemberCursorResponse(items, nextCursor, hasNext)
     }
 
-    private fun encodeRecentCursor(updatedAt: Instant, id: Long): String =
-        Base64.getUrlEncoder().encodeToString("$updatedAt|$id".toByteArray())
-
-    private fun decodeRecentCursor(cursor: String): Pair<Instant, Long> {
-        val decoded = String(Base64.getUrlDecoder().decode(cursor))
-        val (updatedAt, id) = decoded.split("|", limit = 2)
-        return Instant.parse(updatedAt) to id.toLong()
-    }
-
-    private fun encodeDistanceCursor(distance: Double?, id: Long): String =
-        Base64.getUrlEncoder().encodeToString("${distance ?: ""}|$id".toByteArray())
-
-    private fun decodeDistanceCursor(cursor: String): Pair<Double?, Long> {
-        val decoded = String(Base64.getUrlDecoder().decode(cursor))
-        val (distance, id) = decoded.split("|", limit = 2)
-        return distance.ifEmpty { null }?.toDouble() to id.toLong()
-    }
-
     @Transactional(readOnly = true)
     fun searchMembers(viewerId: Long, keyword: String, cursor: String?, size: Int): MemberSearchCursorResponse {
         val decoded = cursor?.let(::decodeSearchCursor)
@@ -264,15 +246,6 @@ class MemberService(
         return MemberSearchCursorResponse(items, nextCursor, hasNext)
     }
 
-    private fun encodeSearchCursor(similarity: Double, id: Long): String =
-        Base64.getUrlEncoder().encodeToString("$similarity|$id".toByteArray())
-
-    private fun decodeSearchCursor(cursor: String): Pair<Double, Long> {
-        val decoded = String(Base64.getUrlDecoder().decode(cursor))
-        val (similarity, id) = decoded.split("|", limit = 2)
-        return similarity.toDouble() to id.toLong()
-    }
-
     private fun validateBirthYear(birthYear: Int) {
         val age = AgeCalculator.fromBirthYear(birthYear)
         if (age !in MIN_AGE..MAX_AGE) {
@@ -286,4 +259,31 @@ class MemberService(
         } else {
             null
         }
+
+    private fun encodeRecentCursor(updatedAt: Instant, id: Long): String =
+        Base64.getUrlEncoder().encodeToString("$updatedAt|$id".toByteArray())
+
+    private fun decodeRecentCursor(cursor: String): Pair<Instant, Long> {
+        val decoded = String(Base64.getUrlDecoder().decode(cursor))
+        val (updatedAt, id) = decoded.split("|", limit = 2)
+        return Instant.parse(updatedAt) to id.toLong()
+    }
+
+    private fun encodeDistanceCursor(distance: Double?, id: Long): String =
+        Base64.getUrlEncoder().encodeToString("${distance ?: ""}|$id".toByteArray())
+
+    private fun decodeDistanceCursor(cursor: String): Pair<Double?, Long> {
+        val decoded = String(Base64.getUrlDecoder().decode(cursor))
+        val (distance, id) = decoded.split("|", limit = 2)
+        return distance.ifEmpty { null }?.toDouble() to id.toLong()
+    }
+
+    private fun encodeSearchCursor(similarity: Double, id: Long): String =
+        Base64.getUrlEncoder().encodeToString("$similarity|$id".toByteArray())
+
+    private fun decodeSearchCursor(cursor: String): Pair<Double, Long> {
+        val decoded = String(Base64.getUrlDecoder().decode(cursor))
+        val (similarity, id) = decoded.split("|", limit = 2)
+        return similarity.toDouble() to id.toLong()
+    }
 }
