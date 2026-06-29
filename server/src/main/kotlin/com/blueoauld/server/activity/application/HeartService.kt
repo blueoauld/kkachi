@@ -6,19 +6,24 @@ import com.blueoauld.server.activity.repository.HeartRepository
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.response.CursorResponse
-import com.blueoauld.server.member.application.MemberCardReader
+import com.blueoauld.server.global.storage.ImageStorage
 import com.blueoauld.server.member.repository.MemberRepository
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Year
+import java.time.ZoneId
 
 @Service
 class HeartService(
 
     private val heartRepository: HeartRepository,
     private val memberRepository: MemberRepository,
-    private val memberCardReader: MemberCardReader,
+    private val imageStorage: ImageStorage,
 ) {
+
+    companion object {
+        private val KST = ZoneId.of("Asia/Seoul")
+    }
 
     @Transactional
     fun sendHeart(senderId: Long, receiverId: Long) {
@@ -47,41 +52,59 @@ class HeartService(
 
     @Transactional(readOnly = true)
     fun getSentHearts(senderId: Long, cursor: Long?, size: Int): CursorResponse<HeartResponse> {
-        val hearts = heartRepository.findSentHearts(senderId, cursor, PageRequest.of(0, size + 1))
-        val cardByMemberId = memberCardReader.readByIds(hearts.map { it.receiverId })
+        val results = heartRepository.findSentHearts(senderId, cursor, size + 1)
+        val hasNext = results.size > size
+        val items = if (hasNext) results.dropLast(1) else results
+        val nextCursor = if (hasNext) items.last().id else null
 
-        return CursorResponse.of(hearts, size, { it.id }) { heart ->
-            cardByMemberId[heart.receiverId]?.let { card ->
-                HeartResponse(
-                    heartId = heart.id,
-                    memberId = card.memberId,
-                    profileImageUrl = card.profileImageUrl,
-                    nickname = card.nickname,
-                    gender = card.gender,
-                    age = card.age,
-                    comment = card.comment,
-                )
-            }
+        val currentYear = Year.now(KST).value
+        val responses = items.map { heart ->
+            HeartResponse(
+                heartId = heart.id,
+                memberId = heart.memberId,
+                profileImageUrl = heart.objectKey?.let {
+                    imageStorage.generatePresignedDownloadUrl(it)
+                },
+                nickname = heart.nickname,
+                gender = heart.gender,
+                age = currentYear - heart.birthYear,
+                comment = heart.comment
+            )
         }
+
+        return CursorResponse(
+            items = responses,
+            nextCursor = nextCursor,
+            hasNext = hasNext,
+        )
     }
 
     @Transactional(readOnly = true)
     fun getReceivedHearts(receiverId: Long, cursor: Long?, size: Int): CursorResponse<HeartResponse> {
-        val hearts = heartRepository.findReceivedHearts(receiverId, cursor, PageRequest.of(0, size + 1))
-        val cardByMemberId = memberCardReader.readByIds(hearts.map { it.senderId })
+        val results = heartRepository.findReceivedHearts(receiverId, cursor, size + 1)
+        val hasNext = results.size > size
+        val items = if (hasNext) results.dropLast(1) else results
+        val nextCursor = if (hasNext) items.last().id else null
 
-        return CursorResponse.of(hearts, size, { it.id }) { heart ->
-            cardByMemberId[heart.senderId]?.let { card ->
-                HeartResponse(
-                    heartId = heart.id,
-                    memberId = card.memberId,
-                    profileImageUrl = card.profileImageUrl,
-                    nickname = card.nickname,
-                    gender = card.gender,
-                    age = card.age,
-                    comment = card.comment,
-                )
-            }
+        val currentYear = Year.now(KST).value
+        val responses = items.map { heart ->
+            HeartResponse(
+                heartId = heart.id,
+                memberId = heart.memberId,
+                profileImageUrl = heart.objectKey?.let {
+                    imageStorage.generatePresignedDownloadUrl(it)
+                },
+                nickname = heart.nickname,
+                gender = heart.gender,
+                age = currentYear - heart.birthYear,
+                comment = heart.comment
+            )
         }
+
+        return CursorResponse(
+            items = responses,
+            nextCursor = nextCursor,
+            hasNext = hasNext,
+        )
     }
 }

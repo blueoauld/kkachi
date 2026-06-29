@@ -1,13 +1,14 @@
-package com.blueoauld.server.member.application
+package com.blueoauld.server.activity.repository.result
 
 import com.blueoauld.server.member.entity.type.GenderType
 
-data class MemberCard(
+data class ActivityResult(
 
+    val id: Long,
     val memberId: Long,
-    val profileImageUrl: String?,
+    val objectKey: String?,
     val nickname: String,
     val gender: GenderType,
-    val age: Int,
+    val birthYear: Int,
     val comment: String,
 )

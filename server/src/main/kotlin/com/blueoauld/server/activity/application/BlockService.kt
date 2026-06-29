@@ -6,19 +6,24 @@ import com.blueoauld.server.activity.repository.BlockRepository
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.response.CursorResponse
-import com.blueoauld.server.member.application.MemberCardReader
+import com.blueoauld.server.global.storage.ImageStorage
 import com.blueoauld.server.member.repository.MemberRepository
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Year
+import java.time.ZoneId
 
 @Service
 class BlockService(
 
     private val blockRepository: BlockRepository,
     private val memberRepository: MemberRepository,
-    private val memberCardReader: MemberCardReader,
+    private val imageStorage: ImageStorage
 ) {
+
+    companion object {
+        private val KST = ZoneId.of("Asia/Seoul")
+    }
 
     @Transactional
     fun block(blockerId: Long, blockedId: Long) {
@@ -47,21 +52,30 @@ class BlockService(
 
     @Transactional(readOnly = true)
     fun getBlocks(blockerId: Long, cursor: Long?, size: Int): CursorResponse<BlockResponse> {
-        val blocks = blockRepository.findBlocks(blockerId, cursor, PageRequest.of(0, size + 1))
-        val cardByMemberId = memberCardReader.readByIds(blocks.map { it.blockedId })
+        val results = blockRepository.findBlocks(blockerId, cursor, size + 1)
+        val hasNext = results.size > size
+        val items = if (hasNext) results.dropLast(1) else results
+        val nextCursor = if (hasNext) items.last().id else null
 
-        return CursorResponse.of(blocks, size, { it.id }) { block ->
-            cardByMemberId[block.blockedId]?.let { card ->
-                BlockResponse(
-                    blockId = block.id,
-                    memberId = card.memberId,
-                    profileImageUrl = card.profileImageUrl,
-                    nickname = card.nickname,
-                    gender = card.gender,
-                    age = card.age,
-                    comment = card.comment,
-                )
-            }
+        val currentYear = Year.now(KST).value
+        val responses = items.map { block ->
+            BlockResponse(
+                blockId = block.id,
+                memberId = block.memberId,
+                profileImageUrl = block.objectKey?.let {
+                    imageStorage.generatePresignedDownloadUrl(it)
+                },
+                nickname = block.nickname,
+                gender = block.gender,
+                age = currentYear - block.birthYear,
+                comment = block.comment
+            )
         }
+
+        return CursorResponse(
+            items = responses,
+            nextCursor = nextCursor,
+            hasNext = hasNext,
+        )
     }
 }

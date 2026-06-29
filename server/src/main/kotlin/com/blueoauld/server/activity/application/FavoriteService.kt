@@ -6,19 +6,24 @@ import com.blueoauld.server.activity.repository.FavoriteRepository
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.response.CursorResponse
-import com.blueoauld.server.member.application.MemberCardReader
+import com.blueoauld.server.global.storage.ImageStorage
 import com.blueoauld.server.member.repository.MemberRepository
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Year
+import java.time.ZoneId
 
 @Service
 class FavoriteService(
 
     private val favoriteRepository: FavoriteRepository,
     private val memberRepository: MemberRepository,
-    private val memberCardReader: MemberCardReader,
+    private val imageStorage: ImageStorage,
 ) {
+
+    companion object {
+        private val KST = ZoneId.of("Asia/Seoul")
+    }
 
     @Transactional
     fun addFavorite(ownerId: Long, targetId: Long) {
@@ -47,41 +52,59 @@ class FavoriteService(
 
     @Transactional(readOnly = true)
     fun getSentFavorites(ownerId: Long, cursor: Long?, size: Int): CursorResponse<FavoriteResponse> {
-        val favorites = favoriteRepository.findFavorites(ownerId, cursor, PageRequest.of(0, size + 1))
-        val cardByMemberId = memberCardReader.readByIds(favorites.map { it.targetId })
+        val results = favoriteRepository.findSentFavorites(ownerId, cursor, size + 1)
+        val hasNext = results.size > size
+        val items = if (hasNext) results.dropLast(1) else results
+        val nextCursor = if (hasNext) items.last().id else null
 
-        return CursorResponse.of(favorites, size, { it.id }) { favorite ->
-            cardByMemberId[favorite.targetId]?.let { card ->
-                FavoriteResponse(
-                    favoriteId = favorite.id,
-                    memberId = card.memberId,
-                    profileImageUrl = card.profileImageUrl,
-                    nickname = card.nickname,
-                    gender = card.gender,
-                    age = card.age,
-                    comment = card.comment,
-                )
-            }
+        val currentYear = Year.now(KST).value
+        val responses = items.map { favorite ->
+            FavoriteResponse(
+                favoriteId = favorite.id,
+                memberId = favorite.memberId,
+                profileImageUrl = favorite.objectKey?.let {
+                    imageStorage.generatePresignedDownloadUrl(it)
+                },
+                nickname = favorite.nickname,
+                gender = favorite.gender,
+                age = currentYear - favorite.birthYear,
+                comment = favorite.comment
+            )
         }
+
+        return CursorResponse(
+            items = responses,
+            nextCursor = nextCursor,
+            hasNext = hasNext,
+        )
     }
 
     @Transactional(readOnly = true)
     fun getReceivedFavorites(targetId: Long, cursor: Long?, size: Int): CursorResponse<FavoriteResponse> {
-        val favorites = favoriteRepository.findReceivedFavorites(targetId, cursor, PageRequest.of(0, size + 1))
-        val cardByMemberId = memberCardReader.readByIds(favorites.map { it.ownerId })
+        val results = favoriteRepository.findReceivedFavorites(targetId, cursor, size + 1)
+        val hasNext = results.size > size
+        val items = if (hasNext) results.dropLast(1) else results
+        val nextCursor = if (hasNext) items.last().id else null
 
-        return CursorResponse.of(favorites, size, { it.id }) { favorite ->
-            cardByMemberId[favorite.ownerId]?.let { card ->
-                FavoriteResponse(
-                    favoriteId = favorite.id,
-                    memberId = card.memberId,
-                    profileImageUrl = card.profileImageUrl,
-                    nickname = card.nickname,
-                    gender = card.gender,
-                    age = card.age,
-                    comment = card.comment,
-                )
-            }
+        val currentYear = Year.now(KST).value
+        val responses = items.map { favorite ->
+            FavoriteResponse(
+                favoriteId = favorite.id,
+                memberId = favorite.memberId,
+                profileImageUrl = favorite.objectKey?.let {
+                    imageStorage.generatePresignedDownloadUrl(it)
+                },
+                nickname = favorite.nickname,
+                gender = favorite.gender,
+                age = currentYear - favorite.birthYear,
+                comment = favorite.comment
+            )
         }
+
+        return CursorResponse(
+            items = responses,
+            nextCursor = nextCursor,
+            hasNext = hasNext,
+        )
     }
 }

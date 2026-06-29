@@ -44,6 +44,10 @@ dependencies {
 
     implementation(platform("software.amazon.awssdk:bom:2.46.17"))
     implementation("software.amazon.awssdk:s3")
+
+    implementation("com.linecorp.kotlin-jdsl:jpql-dsl:3.9.0")
+    implementation("com.linecorp.kotlin-jdsl:jpql-render:3.9.0")
+    implementation("com.linecorp.kotlin-jdsl:spring-data-jpa-support:3.9.0")
 }
 
 kotlin {

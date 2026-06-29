@@ -15,6 +15,24 @@ class SecretImageAccessController(
     private val secretImageAccessService: SecretImageAccessService,
 ) {
 
+    @PostMapping("/v1/secret-images/viewers/{viewerId}")
+    fun openSecretImage(
+        @LoginMember memberId: Long,
+        @PathVariable viewerId: Long,
+    ): ResponseEntity<Unit> {
+        secretImageAccessService.openSecretImage(memberId, viewerId)
+        return ResponseEntity.status(HttpStatus.CREATED).build()
+    }
+
+    @DeleteMapping("/v1/secret-images/viewers/{viewerId}")
+    fun closeSecretImage(
+        @LoginMember memberId: Long,
+        @PathVariable viewerId: Long,
+    ): ResponseEntity<Unit> {
+        secretImageAccessService.closeSecretImage(memberId, viewerId)
+        return ResponseEntity.noContent().build()
+    }
+
     @GetMapping("/v1/secret-images/viewers")
     fun getSecretImageViewers(
         @LoginMember memberId: Long,
@@ -33,23 +51,5 @@ class SecretImageAccessController(
     ): ResponseEntity<CursorResponse<SecretImageAccessResponse>> {
         val response = secretImageAccessService.getSecretImageOwners(memberId, cursor, size)
         return ResponseEntity.ok(response)
-    }
-
-    @PostMapping("/v1/secret-images/viewers/{viewerId}")
-    fun openSecretImage(
-        @LoginMember memberId: Long,
-        @PathVariable viewerId: Long,
-    ): ResponseEntity<Unit> {
-        secretImageAccessService.openSecretImage(memberId, viewerId)
-        return ResponseEntity.status(HttpStatus.CREATED).build()
-    }
-
-    @DeleteMapping("/v1/secret-images/viewers/{viewerId}")
-    fun closeSecretImage(
-        @LoginMember memberId: Long,
-        @PathVariable viewerId: Long,
-    ): ResponseEntity<Unit> {
-        secretImageAccessService.closeSecretImage(memberId, viewerId)
-        return ResponseEntity.noContent().build()
     }
 }
