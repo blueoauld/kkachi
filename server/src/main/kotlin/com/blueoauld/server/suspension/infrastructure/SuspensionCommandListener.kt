@@ -5,10 +5,13 @@ import com.blueoauld.server.suspension.application.SuspensionService
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
 class SuspensionCommandListener(
+
+    @Value($$"${discord.bot.admin-role-id}") private val adminRoleId: String,
 
     private val suspensionService: SuspensionService,
 ) : ListenerAdapter() {
@@ -24,6 +27,12 @@ class SuspensionCommandListener(
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         if (event.name != COMMAND_NAME) {
+            return
+        }
+
+        val member = event.member
+        if (member == null || member.roles.none { it.id == adminRoleId }) {
+            event.reply("이 명령어를 사용할 권한이 없습니다.").setEphemeral(true).queue()
             return
         }
 
