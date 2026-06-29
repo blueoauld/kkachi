@@ -8,6 +8,7 @@ import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
 import com.blueoauld.server.member.application.response.MemberCursorResponse
 import com.blueoauld.server.member.application.response.MemberProfileResponse
+import com.blueoauld.server.member.application.response.MemberSearchCursorResponse
 import com.blueoauld.server.member.application.response.MyProfileResponse
 import com.blueoauld.server.member.entity.type.GenderType
 import jakarta.validation.Valid
@@ -30,6 +31,17 @@ class MemberController(
         @RequestParam(defaultValue = "20") size: Int,
     ): ResponseEntity<MemberCursorResponse> {
         val response = memberService.getMembers(memberId, gender, sort, cursor, size)
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/v1/members/search")
+    fun searchMembers(
+        @LoginMember memberId: Long,
+        @RequestParam keyword: String,
+        @RequestParam(required = false) cursor: String?,
+        @RequestParam(defaultValue = "20") size: Int,
+    ): ResponseEntity<MemberSearchCursorResponse> {
+        val response = memberService.searchMembers(memberId, keyword, cursor, size)
         return ResponseEntity.ok(response)
     }
 

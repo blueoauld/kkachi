@@ -11,10 +11,7 @@ import com.blueoauld.server.global.util.AgeCalculator
 import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
-import com.blueoauld.server.member.application.response.MemberCursorResponse
-import com.blueoauld.server.member.application.response.MemberListResponse
-import com.blueoauld.server.member.application.response.MemberProfileResponse
-import com.blueoauld.server.member.application.response.MyProfileResponse
+import com.blueoauld.server.member.application.response.*
 import com.blueoauld.server.member.entity.type.GenderType
 import com.blueoauld.server.member.entity.type.ImageType
 import com.blueoauld.server.member.repository.MemberImageRepository
@@ -23,6 +20,7 @@ import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.PrecisionModel
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -215,6 +213,64 @@ class MemberService(
         val decoded = String(Base64.getUrlDecoder().decode(cursor))
         val (distance, id) = decoded.split("|", limit = 2)
         return distance.ifEmpty { null }?.toDouble() to id.toLong()
+    }
+
+    @Transactional(readOnly = true)
+    fun searchMembers(viewerId: Long, keyword: String, cursor: String?, size: Int): MemberSearchCursorResponse {
+        val decoded = cursor?.let(::decodeSearchCursor)
+        val results = memberRepository.searchByNickname(
+            viewerId,
+            keyword,
+            decoded?.first,
+            decoded?.second,
+            PageRequest.of(0, size + 1),
+        )
+
+        val hasNext = results.size > size
+        val page = if (hasNext) results.take(size) else results
+        val memberIds = page.map { it.id }
+
+        if (memberIds.isEmpty()) {
+            return MemberSearchCursorResponse(emptyList(), null, false)
+        }
+
+        val heartCountByMemberId = heartRepository.countByReceiverIds(memberIds)
+            .associate { it.memberId to it.count }
+        val representativeImageByMemberId = memberImageRepository
+            .findByMemberIdInAndTypeAndDisplayOrder(memberIds, ImageType.PUBLIC, 0)
+            .associateBy { it.memberId }
+
+        val items = page.map { member ->
+            MemberSearchResponse(
+                memberId = member.id,
+                nickname = member.nickname,
+                profileImageUrl = representativeImageByMemberId[member.id]?.let {
+                    imageStorage.generatePresignedDownloadUrl(it.objectKey)
+                },
+                gender = GenderType.valueOf(member.gender),
+                age = AgeCalculator.fromBirthYear(member.birthYear),
+                heartCount = heartCountByMemberId[member.id] ?: 0,
+                comment = member.comment,
+            )
+        }
+
+        val nextCursor = if (!hasNext) {
+            null
+        } else {
+            val last = page.last()
+            encodeSearchCursor(last.similarity, last.id)
+        }
+
+        return MemberSearchCursorResponse(items, nextCursor, hasNext)
+    }
+
+    private fun encodeSearchCursor(similarity: Double, id: Long): String =
+        Base64.getUrlEncoder().encodeToString("$similarity|$id".toByteArray())
+
+    private fun decodeSearchCursor(cursor: String): Pair<Double, Long> {
+        val decoded = String(Base64.getUrlDecoder().decode(cursor))
+        val (similarity, id) = decoded.split("|", limit = 2)
+        return similarity.toDouble() to id.toLong()
     }
 
     private fun validateBirthYear(birthYear: Int) {
