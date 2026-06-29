@@ -37,10 +37,10 @@ jwt:
 
 discord:
   bot:
-    enabled: ${DISCORD_BOT_ENABLED:false}
-    token: ${DISCORD_BOT_TOKEN:token}
-    guild-id: ${DISCORD_GUILD_ID:guild}
-    admin-role-id: ${DISCORD_ADMIN_ROLE_ID:role}
+    enabled: true
+    token: ${DISCORD_BOT_TOKEN}
+    guild-id: ${DISCORD_GUILD_ID}
+    admin-role-id: ${DISCORD_ADMIN_ROLE_ID}
 
 r2:
   endpoint: ${R2_ENDPOINT}

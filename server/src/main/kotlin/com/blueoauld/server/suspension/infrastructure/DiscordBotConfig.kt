@@ -26,15 +26,21 @@ class DiscordBotConfig(
             .build()
             .awaitReady()
 
-        val command = Commands.slash(SuspensionCommandListener.COMMAND_NAME, "회원을 정지합니다.")
-            .addOption(OptionType.STRING, SuspensionCommandListener.OPTION_PHONE, "정지할 회원의 휴대폰 번호", true)
-            .addOption(OptionType.STRING, SuspensionCommandListener.OPTION_REASON, "정지 사유", true)
-            .addOption(OptionType.INTEGER, SuspensionCommandListener.OPTION_DAYS, "정지 일수", true)
+        val commands = listOf(
+            Commands.slash(SuspensionCommandListener.COMMAND_SUSPEND, "회원을 정지합니다.")
+                .addOption(OptionType.STRING, SuspensionCommandListener.OPTION_PHONE, "정지할 회원의 휴대폰 번호", true)
+                .addOption(OptionType.STRING, SuspensionCommandListener.OPTION_REASON, "정지 사유", true)
+                .addOption(OptionType.INTEGER, SuspensionCommandListener.OPTION_DAYS, "정지 일수", true),
+            Commands.slash(SuspensionCommandListener.COMMAND_LOOKUP, "회원의 정지 상태를 조회합니다.")
+                .addOption(OptionType.STRING, SuspensionCommandListener.OPTION_PHONE, "조회할 회원의 휴대폰 번호", true),
+            Commands.slash(SuspensionCommandListener.COMMAND_RELEASE, "회원의 정지를 해제합니다.")
+                .addOption(OptionType.STRING, SuspensionCommandListener.OPTION_PHONE, "해제할 회원의 휴대폰 번호", true),
+        )
 
         if (guildId.isNotBlank()) {
-            jda.getGuildById(guildId)?.upsertCommand(command)?.queue()
+            jda.getGuildById(guildId)?.updateCommands()?.addCommands(commands)?.queue()
         } else {
-            jda.upsertCommand(command).queue()
+            jda.updateCommands().addCommands(commands).queue()
         }
         return jda
     }

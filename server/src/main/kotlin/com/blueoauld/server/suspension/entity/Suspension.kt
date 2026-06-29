@@ -21,9 +21,16 @@ class Suspension(
     @Column(name = "suspended_until", nullable = false)
     val suspendedUntil: Instant,
 
+    @Column(name = "released_at")
+    var releasedAt: Instant? = null,
+
     @Column(name = "created_at", nullable = false, updatable = false)
     var createdAt: Instant = Instant.now(),
 ) {
+
+    fun release() {
+        this.releasedAt = Instant.now()
+    }
 
     @PrePersist
     fun onCreate() {

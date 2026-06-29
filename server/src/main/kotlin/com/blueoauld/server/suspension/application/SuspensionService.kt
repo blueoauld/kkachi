@@ -42,23 +42,44 @@ class SuspensionService(
 
     @Transactional(readOnly = true)
     fun isSuspended(phone: String): Boolean =
-        suspensionRepository.existsByPhoneAndSuspendedUntilAfter(phone, Instant.now())
+        suspensionRepository.existsByPhoneAndSuspendedUntilAfterAndReleasedAtIsNull(phone, Instant.now())
+
+    @Transactional(readOnly = true)
+    fun countSuspensions(phone: String): Long = suspensionRepository.countByPhone(phone)
 
     @Transactional(readOnly = true)
     fun getMySuspension(memberId: Long): SuspensionResponse {
         val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
 
+        return lookup(member.phone) ?: throw BusinessException(ErrorCode.SUSPENSION_NOT_FOUND)
+    }
+
+    @Transactional(readOnly = true)
+    fun lookup(phone: String): SuspensionResponse? {
         val now = Instant.now()
         val suspension = suspensionRepository
-            .findFirstByPhoneAndSuspendedUntilAfterOrderBySuspendedUntilDesc(member.phone, now)
-            ?: throw BusinessException(ErrorCode.SUSPENSION_NOT_FOUND)
+            .findFirstByPhoneAndSuspendedUntilAfterAndReleasedAtIsNullOrderBySuspendedUntilDesc(phone, now)
+            ?: return null
 
-        val remainingDays =
-            ceil(Duration.between(now, suspension.suspendedUntil).toMinutes() / MINUTES_PER_DAY).toLong()
+        val remainingDays = ceil(
+            Duration.between(now, suspension.suspendedUntil).toMinutes() / MINUTES_PER_DAY
+        ).toLong()
 
         return SuspensionResponse(
             reason = suspension.reason,
             remainingDays = remainingDays,
         )
+    }
+
+    @Transactional
+    fun release(phone: String): Long {
+        val activeSuspensions = suspensionRepository.findByPhoneAndSuspendedUntilAfterAndReleasedAtIsNull(
+            phone, Instant.now()
+        )
+
+        activeSuspensions.forEach {
+            it.release()
+        }
+        return activeSuspensions.size.toLong()
     }
 }

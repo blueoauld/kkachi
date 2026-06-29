@@ -6,7 +6,14 @@ import java.time.Instant
 
 interface SuspensionRepository : JpaRepository<Suspension, Long> {
 
-    fun existsByPhoneAndSuspendedUntilAfter(phone: String, now: Instant): Boolean
+    fun existsByPhoneAndSuspendedUntilAfterAndReleasedAtIsNull(phone: String, now: Instant): Boolean
 
-    fun findFirstByPhoneAndSuspendedUntilAfterOrderBySuspendedUntilDesc(phone: String, now: Instant): Suspension?
+    fun findFirstByPhoneAndSuspendedUntilAfterAndReleasedAtIsNullOrderBySuspendedUntilDesc(
+        phone: String,
+        now: Instant,
+    ): Suspension?
+
+    fun findByPhoneAndSuspendedUntilAfterAndReleasedAtIsNull(phone: String, now: Instant): List<Suspension>
+
+    fun countByPhone(phone: String): Long
 }
