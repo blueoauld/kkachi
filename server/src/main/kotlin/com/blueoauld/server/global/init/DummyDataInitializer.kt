@@ -3,9 +3,11 @@ package com.blueoauld.server.global.init
 import com.blueoauld.server.activity.entity.Block
 import com.blueoauld.server.activity.entity.Favorite
 import com.blueoauld.server.activity.entity.Heart
+import com.blueoauld.server.activity.entity.SecretImageAccess
 import com.blueoauld.server.activity.repository.BlockRepository
 import com.blueoauld.server.activity.repository.FavoriteRepository
 import com.blueoauld.server.activity.repository.HeartRepository
+import com.blueoauld.server.activity.repository.SecretImageAccessRepository
 import com.blueoauld.server.member.entity.Member
 import com.blueoauld.server.member.entity.type.GenderType
 import com.blueoauld.server.member.repository.MemberRepository
@@ -29,6 +31,7 @@ class DummyDataInitializer(
     private val heartRepository: HeartRepository,
     private val favoriteRepository: FavoriteRepository,
     private val blockRepository: BlockRepository,
+    private val secretImageAccessRepository: SecretImageAccessRepository,
     private val passwordEncoder: PasswordEncoder,
 ) : ApplicationRunner {
 
@@ -64,14 +67,20 @@ class DummyDataInitializer(
         val savedMembers = memberRepository.saveAll(members)
         val receiver = savedMembers.first()
 
-        val hearts = savedMembers.drop(1).map { Heart(senderId = it.id, receiverId = receiver.id) }
-        heartRepository.saveAll(hearts)
+        val heartsAsReceiver = savedMembers.drop(1).map { Heart(senderId = it.id, receiverId = receiver.id) }
+        val heartsAsSender = savedMembers.drop(1).map { Heart(senderId = receiver.id, receiverId = it.id) }
+        heartRepository.saveAll(heartsAsReceiver + heartsAsSender)
 
-        val favorites = savedMembers.drop(1).map { Favorite(ownerId = it.id, targetId = receiver.id) }
-        favoriteRepository.saveAll(favorites)
+        val favoritesAsTarget = savedMembers.drop(1).map { Favorite(ownerId = it.id, targetId = receiver.id) }
+        val favoritesAsOwner = savedMembers.drop(1).map { Favorite(ownerId = receiver.id, targetId = it.id) }
+        favoriteRepository.saveAll(favoritesAsTarget + favoritesAsOwner)
 
         val blocks = savedMembers.drop(1).map { Block(blockerId = receiver.id, blockedId = it.id) }
         blockRepository.saveAll(blocks)
+
+        val secretImageViewers = savedMembers.drop(1).map { SecretImageAccess(ownerId = receiver.id, viewerId = it.id) }
+        val secretImageOwners = savedMembers.drop(1).map { SecretImageAccess(ownerId = it.id, viewerId = receiver.id) }
+        secretImageAccessRepository.saveAll(secretImageViewers + secretImageOwners)
 
         log.info("더미 회원 {}명", savedMembers.size)
     }
