@@ -35,6 +35,12 @@ jwt:
   access-token-expiration: 1800000 # 30분 (ms)
   refresh-token-expiration: 1209600000 # 14일 (ms)
 
+discord:
+  bot:
+    enabled: ${DISCORD_BOT_ENABLED:false}
+    token: ${DISCORD_BOT_TOKEN}
+    guild-id: ${DISCORD_GUILD_ID}
+
 r2:
   endpoint: ${R2_ENDPOINT}
   access-key: ${R2_ACCESS_KEY}

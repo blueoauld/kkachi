@@ -13,6 +13,7 @@ import com.blueoauld.server.global.security.CodeGenerator
 import com.blueoauld.server.global.security.PhoneHasher
 import com.blueoauld.server.member.entity.Member
 import com.blueoauld.server.member.repository.MemberRepository
+import com.blueoauld.server.suspension.application.SuspensionService
 import io.jsonwebtoken.JwtException
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.core.script.RedisScript
@@ -33,6 +34,7 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val phoneHasher: PhoneHasher,
     private val jwtProvider: JwtProvider,
+    private val suspensionService: SuspensionService,
 ) {
 
     companion object {
@@ -63,6 +65,7 @@ class AuthService(
     }
 
     fun sendVerificationCode(request: SendVerificationCodeRequest) {
+        checkSuspended(request.phone)
         checkDailyLimit(request.phone)
 
         val verificationCode = codeGenerator.numeric(VERIFICATION_CODE_LENGTH)
@@ -77,6 +80,7 @@ class AuthService(
 
     @Transactional
     fun signup(request: SignupRequest): TokenResponse {
+        checkSuspended(request.phone)
         validateVerificationCode(request.phone, request.verificationCode)
 
         if (request.password != request.passwordConfirm) {
@@ -151,6 +155,12 @@ class AuthService(
     }
 
     private fun verificationCodeKey(phone: String) = "$VERIFICATION_CODE_KEY_PREFIX${phoneHasher.hash(phone)}"
+
+    private fun checkSuspended(phone: String) {
+        if (suspensionService.isSuspended(phone)) {
+            throw BusinessException(ErrorCode.ACCOUNT_SUSPENDED)
+        }
+    }
 
     private fun checkDailyLimit(phone: String) {
         val key = "$DAILY_SEND_COUNT_KEY_PREFIX${LocalDate.now(KST)}:${phoneHasher.hash(phone)}"

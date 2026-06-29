@@ -53,6 +53,11 @@ enum class ErrorCode(
     // 신고
     CANNOT_REPORT_SELF(HttpStatus.BAD_REQUEST, "자기 자신을 신고할 수 없습니다."),
 
+    // 정지
+    ACCOUNT_SUSPENDED(HttpStatus.FORBIDDEN, "정지된 계정입니다."),
+    INVALID_SUSPENSION_DAYS(HttpStatus.BAD_REQUEST, "정지 일수는 1 이상이어야 합니다."),
+    SUSPENSION_NOT_FOUND(HttpStatus.NOT_FOUND, "정지 내역을 찾을 수 없습니다."),
+
     // 채팅
     CANNOT_CHAT_SELF(HttpStatus.BAD_REQUEST, "자기 자신과 채팅할 수 없습니다."),
     CHAT_BLOCKED(HttpStatus.FORBIDDEN, "차단 관계인 상대와는 채팅할 수 없습니다."),

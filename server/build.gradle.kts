@@ -49,6 +49,10 @@ dependencies {
     implementation("com.linecorp.kotlin-jdsl:jpql-dsl:3.9.0")
     implementation("com.linecorp.kotlin-jdsl:jpql-render:3.9.0")
     implementation("com.linecorp.kotlin-jdsl:spring-data-jpa-support:3.9.0")
+
+    implementation("net.dv8tion:JDA:6.4.2") {
+        exclude(module = "opus-java")
+    }
 }
 
 kotlin {
