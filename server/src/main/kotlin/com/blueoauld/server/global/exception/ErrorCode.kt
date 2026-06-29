@@ -53,6 +53,12 @@ enum class ErrorCode(
     // 신고
     CANNOT_REPORT_SELF(HttpStatus.BAD_REQUEST, "자기 자신을 신고할 수 없습니다."),
 
+    // 채팅
+    CANNOT_CHAT_SELF(HttpStatus.BAD_REQUEST, "자기 자신과 채팅할 수 없습니다."),
+    CHAT_BLOCKED(HttpStatus.FORBIDDEN, "차단 관계인 상대와는 채팅할 수 없습니다."),
+    CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
+    NOT_CHAT_ROOM_MEMBER(HttpStatus.FORBIDDEN, "채팅방에 참여하고 있지 않습니다."),
+
     // 로그인
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "휴대폰 번호 또는 비밀번호가 올바르지 않습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
