@@ -39,7 +39,7 @@ class Member(
     var bio: String = "안녕하세요.",
 
     @Column(name = "comment", length = 100, nullable = false)
-    private var comment: String = "반갑습니다.",
+    var comment: String = "반갑습니다.",
 
     @Column(name = "location", columnDefinition = "geography(Point, 4326)")
     private var location: Point? = null,

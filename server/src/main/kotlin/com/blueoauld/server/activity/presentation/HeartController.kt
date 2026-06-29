@@ -1,7 +1,9 @@
 package com.blueoauld.server.activity.presentation
 
 import com.blueoauld.server.activity.application.HeartService
+import com.blueoauld.server.activity.application.response.SentHeartResponse
 import com.blueoauld.server.global.resolver.LoginMember
+import com.blueoauld.server.global.response.CursorResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -29,5 +31,15 @@ class HeartController(
     ): ResponseEntity<Unit> {
         heartService.cancelHeart(memberId, receiverId)
         return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/v1/hearts/sent")
+    fun getSentHearts(
+        @LoginMember memberId: Long,
+        @RequestParam(required = false) cursor: Long?,
+        @RequestParam(defaultValue = "20") size: Int,
+    ): ResponseEntity<CursorResponse<SentHeartResponse>> {
+        val response = heartService.getSentHearts(memberId, cursor, size)
+        return ResponseEntity.ok(response)
     }
 }
