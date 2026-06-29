@@ -10,8 +10,11 @@ import com.blueoauld.server.global.storage.ImageStorage
 import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
+import com.blueoauld.server.member.application.response.MemberCursorResponse
+import com.blueoauld.server.member.application.response.MemberListResponse
 import com.blueoauld.server.member.application.response.MemberProfileResponse
 import com.blueoauld.server.member.application.response.MyProfileResponse
+import com.blueoauld.server.member.entity.type.GenderType
 import com.blueoauld.server.member.entity.type.ImageType
 import com.blueoauld.server.member.repository.MemberImageRepository
 import com.blueoauld.server.member.repository.MemberRepository
@@ -19,11 +22,14 @@ import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.PrecisionModel
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import java.time.Year
 import java.time.ZoneId
+import java.util.*
 
 @Service
 class MemberService(
@@ -123,6 +129,62 @@ class MemberService(
             blocked = blockRepository.existsByBlockerIdAndBlockedId(viewerId, targetId),
             publicImageUrls = publicImageUrls,
         )
+    }
+
+    @Transactional(readOnly = true)
+    fun getMembers(viewerId: Long, gender: GenderType?, cursor: String?, size: Int): MemberCursorResponse {
+        val decodedCursor = cursor?.let(::decodeCursor)
+        val members = memberRepository.findMembers(
+            viewerId = viewerId,
+            gender = gender,
+            cursorUpdatedAt = decodedCursor?.first,
+            cursorId = decodedCursor?.second,
+            pageable = PageRequest.of(0, size + 1),
+        )
+        val hasNext = members.size > size
+        val pageMembers = if (hasNext) members.take(size) else members
+        val memberIds = pageMembers.map { it.id }
+
+        if (memberIds.isEmpty()) {
+            return MemberCursorResponse(emptyList(), null, false)
+        }
+
+        val heartCountByMemberId = heartRepository.countByReceiverIds(memberIds)
+            .associate { it.memberId to it.count }
+        val distanceByMemberId = memberRepository.findDistances(viewerId, memberIds)
+            .associate { it.id to it.distance }
+        val representativeImageByMemberId = memberImageRepository
+            .findByMemberIdInAndTypeAndDisplayOrder(memberIds, ImageType.PUBLIC, 0)
+            .associateBy { it.memberId }
+
+        val currentYear = Year.now(KST).value
+        val items = pageMembers.map { member ->
+            MemberListResponse(
+                memberId = member.id,
+                profileImageUrl = representativeImageByMemberId[member.id]?.let {
+                    imageStorage.generatePresignedDownloadUrl(it.objectKey)
+                },
+                nickname = member.nickname,
+                age = currentYear - member.birthYear,
+                gender = member.gender,
+                heartCount = heartCountByMemberId[member.id] ?: 0,
+                comment = member.comment,
+                updatedAt = member.updatedAt,
+                distance = distanceByMemberId[member.id],
+            )
+        }
+        val nextCursor = if (hasNext) pageMembers.last().let { encodeCursor(it.updatedAt, it.id) } else null
+
+        return MemberCursorResponse(items, nextCursor, hasNext)
+    }
+
+    private fun encodeCursor(updatedAt: Instant, id: Long): String =
+        Base64.getUrlEncoder().encodeToString("$updatedAt|$id".toByteArray())
+
+    private fun decodeCursor(cursor: String): Pair<Instant, Long> {
+        val decoded = String(Base64.getUrlDecoder().decode(cursor))
+        val (updatedAt, id) = decoded.split("|", limit = 2)
+        return Instant.parse(updatedAt) to id.toLong()
     }
 
     private fun validateBirthYear(birthYear: Int) {

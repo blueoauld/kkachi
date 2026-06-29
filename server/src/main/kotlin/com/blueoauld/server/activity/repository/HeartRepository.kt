@@ -43,4 +43,20 @@ interface HeartRepository : JpaRepository<Heart, Long> {
         @Param("cursor") cursor: Long?,
         pageable: Pageable,
     ): List<Heart>
+
+    @Query(
+        """
+        SELECT h.receiverId AS memberId, COUNT(h) AS count
+        FROM Heart h
+        WHERE h.receiverId IN (:memberIds)
+        GROUP BY h.receiverId
+        """,
+    )
+    fun countByReceiverIds(@Param("memberIds") memberIds: Collection<Long>): List<HeartCountProjection>
+}
+
+interface HeartCountProjection {
+
+    val memberId: Long
+    val count: Long
 }
