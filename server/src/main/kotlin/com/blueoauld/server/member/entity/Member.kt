@@ -64,6 +64,8 @@ class Member(
         this.location = location
     }
 
+    fun hasLocation(): Boolean = location != null
+
     fun updateComment(comment: String) {
         this.comment = comment
     }

@@ -2,11 +2,14 @@ package com.blueoauld.server.member.presentation
 
 import com.blueoauld.server.global.resolver.LoginMember
 import com.blueoauld.server.member.application.MemberService
+import com.blueoauld.server.member.application.MemberSortType
 import com.blueoauld.server.member.application.request.UpdateCommentRequest
 import com.blueoauld.server.member.application.request.UpdateLocationRequest
 import com.blueoauld.server.member.application.request.UpdateProfileRequest
+import com.blueoauld.server.member.application.response.MemberCursorResponse
 import com.blueoauld.server.member.application.response.MemberProfileResponse
 import com.blueoauld.server.member.application.response.MyProfileResponse
+import com.blueoauld.server.member.entity.type.GenderType
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -17,6 +20,18 @@ class MemberController(
 
     private val memberService: MemberService,
 ) {
+
+    @GetMapping("/v1/members")
+    fun getMembers(
+        @LoginMember memberId: Long,
+        @RequestParam(required = false) gender: GenderType?,
+        @RequestParam(defaultValue = "RECENT") sort: MemberSortType,
+        @RequestParam(required = false) cursor: String?,
+        @RequestParam(defaultValue = "20") size: Int,
+    ): ResponseEntity<MemberCursorResponse> {
+        val response = memberService.getMembers(memberId, gender, sort, cursor, size)
+        return ResponseEntity.ok(response)
+    }
 
     @GetMapping("/v1/members/me")
     fun getMyProfile(@LoginMember memberId: Long): ResponseEntity<MyProfileResponse> {
