@@ -15,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec
 @Converter
 class PhoneAttributeConverter(
 
-    @Value("\${app.crypto.secret-key}") secretKey: String,
+    @Value($$"${app.crypto.secret-key}") secretKey: String,
 ) : AttributeConverter<String, String> {
 
     companion object {

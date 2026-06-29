@@ -15,9 +15,9 @@ import java.time.Duration
 @Component
 class R2ImageStorage(
 
-    @Value("\${r2.bucket}") private val bucket: String,
-    @Value("\${r2.presigned-url-expiration}") private val presignedUrlExpiration: Long,
-    @Value("\${r2.presigned-download-url-expiration}") private val presignedDownloadUrlExpiration: Long,
+    @Value($$"${r2.bucket}") private val bucket: String,
+    @Value($$"${r2.presigned-url-expiration}") private val presignedUrlExpiration: Long,
+    @Value($$"${r2.presigned-download-url-expiration}") private val presignedDownloadUrlExpiration: Long,
 
     private val s3Presigner: S3Presigner,
     private val s3Client: S3Client,

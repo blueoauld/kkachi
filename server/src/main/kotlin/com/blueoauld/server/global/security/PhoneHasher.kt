@@ -10,7 +10,7 @@ import javax.crypto.spec.SecretKeySpec
 @Component
 class PhoneHasher(
 
-    @Value("\${app.crypto.secret-key}") secretKey: String,
+    @Value($$"${app.crypto.secret-key}") secretKey: String,
 ) {
 
     companion object {

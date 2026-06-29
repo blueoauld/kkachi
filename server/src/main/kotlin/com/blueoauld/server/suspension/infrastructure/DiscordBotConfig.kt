@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration
 @ConditionalOnProperty(prefix = "discord.bot", name = ["enabled"], havingValue = "true")
 class DiscordBotConfig(
 
-    @Value("\${discord.bot.token}") private val token: String,
-    @Value("\${discord.bot.guild-id}") private val guildId: String,
+    @Value($$"${discord.bot.token}") private val token: String,
+    @Value($$"${discord.bot.guild-id}") private val guildId: String,
 
     private val suspensionCommandListener: SuspensionCommandListener,
 ) {

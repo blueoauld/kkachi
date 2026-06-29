@@ -15,9 +15,9 @@ import java.net.URI
 @Configuration
 class R2Config(
 
-    @Value("\${r2.endpoint}") private val endpoint: String,
-    @Value("\${r2.access-key}") private val accessKey: String,
-    @Value("\${r2.secret-key}") private val secretKey: String,
+    @Value($$"${r2.endpoint}") private val endpoint: String,
+    @Value($$"${r2.access-key}") private val accessKey: String,
+    @Value($$"${r2.secret-key}") private val secretKey: String,
 ) {
 
     @Bean

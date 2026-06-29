@@ -10,9 +10,9 @@ import java.util.*
 @Component
 class JwtProvider(
 
-    @Value("\${jwt.secret}") secret: String,
-    @Value("\${jwt.access-token-expiration}") val accessTokenExpiration: Long,
-    @Value("\${jwt.refresh-token-expiration}") val refreshTokenExpiration: Long,
+    @Value($$"${jwt.secret}") secret: String,
+    @Value($$"${jwt.access-token-expiration}") val accessTokenExpiration: Long,
+    @Value($$"${jwt.refresh-token-expiration}") val refreshTokenExpiration: Long,
 ) {
 
     private val key = Keys.hmacShaKeyFor(secret.toByteArray(StandardCharsets.UTF_8))
