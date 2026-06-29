@@ -1,11 +1,13 @@
 package com.blueoauld.server.member.application
 
+import com.blueoauld.server.activity.repository.SecretImageAccessRepository
 import com.blueoauld.server.global.exception.BusinessException
 import com.blueoauld.server.global.exception.ErrorCode
 import com.blueoauld.server.global.storage.ImageStorage
 import com.blueoauld.server.member.application.request.CreateImageUploadUrlRequest
 import com.blueoauld.server.member.application.request.UpdateImagesRequest
 import com.blueoauld.server.member.application.response.ImageUploadUrlResponse
+import com.blueoauld.server.member.application.response.SecretImageResponse
 import com.blueoauld.server.member.entity.MemberImage
 import com.blueoauld.server.member.entity.type.ImageType
 import com.blueoauld.server.member.repository.MemberImageRepository
@@ -17,6 +19,7 @@ import java.util.*
 class MemberImageService(
 
     private val memberImageRepository: MemberImageRepository,
+    private val secretImageAccessRepository: SecretImageAccessRepository,
     private val imageStorage: ImageStorage,
 ) {
 
@@ -74,6 +77,19 @@ class MemberImageService(
                 memberImageRepository.delete(image)
                 imageStorage.delete(image.objectKey)
             }
+    }
+
+    @Transactional(readOnly = true)
+    fun getSecretImages(viewerId: Long, targetId: Long): SecretImageResponse {
+        if (viewerId != targetId && !secretImageAccessRepository.existsByOwnerIdAndViewerId(targetId, viewerId)) {
+            throw BusinessException(ErrorCode.SECRET_IMAGE_ACCESS_DENIED)
+        }
+
+        val imageUrls = memberImageRepository.findByMemberIdAndType(targetId, ImageType.SECRET)
+            .sortedBy { it.displayOrder }
+            .map { imageStorage.generatePresignedDownloadUrl(it.objectKey) }
+
+        return SecretImageResponse(imageUrls)
     }
 
     private fun registerNewImage(memberId: Long, type: ImageType, tmpObjectKey: String, order: Int) {
