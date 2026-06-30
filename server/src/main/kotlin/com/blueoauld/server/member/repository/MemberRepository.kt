@@ -12,6 +12,8 @@ interface MemberRepository : JpaRepository<Member, Long>, MemberCustomRepository
 
     fun findByPhone(phone: String): Member?
 
+    fun findByNickname(nickname: String): Member?
+
     fun existsByNicknameAndIdNot(nickname: String, id: Long): Boolean
 
     @Query(

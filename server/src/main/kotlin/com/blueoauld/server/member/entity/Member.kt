@@ -45,7 +45,7 @@ class Member(
     private var location: Point? = null,
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private var createdAt: Instant = Instant.now(),
+    var createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at", nullable = false)
     var updatedAt: Instant = Instant.now(),

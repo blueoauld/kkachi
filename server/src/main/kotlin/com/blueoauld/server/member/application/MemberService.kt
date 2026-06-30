@@ -82,6 +82,28 @@ class MemberService(
     }
 
     @Transactional(readOnly = true)
+    fun getMemberDetailByNickname(nickname: String): MemberDetailResponse {
+        val member = memberRepository.findByNickname(nickname) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+
+        val publicImageUrls = imageUrls(member.id, ImageType.PUBLIC)
+        val secretImageUrls = imageUrls(member.id, ImageType.SECRET)
+
+        return MemberDetailResponse(
+            id = member.id,
+            nickname = member.nickname,
+            gender = member.gender,
+            birthYear = member.birthYear,
+            phone = member.phone,
+            comment = member.comment,
+            bio = member.bio,
+            createdAt = member.createdAt,
+            updatedAt = member.updatedAt,
+            publicImageUrls = publicImageUrls,
+            secretImageUrls = secretImageUrls,
+        )
+    }
+
+    @Transactional(readOnly = true)
     fun getMyProfile(memberId: Long): MyProfileResponse {
         val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
 
@@ -286,4 +308,9 @@ class MemberService(
         val (similarity, id) = decoded.split("|", limit = 2)
         return similarity.toDouble() to id.toLong()
     }
+
+    private fun imageUrls(memberId: Long, type: ImageType): List<String> =
+        memberImageRepository.findByMemberIdAndType(memberId, type)
+            .sortedBy { it.displayOrder }
+            .map { imageStorage.generatePresignedDownloadUrl(it.objectKey) }
 }
