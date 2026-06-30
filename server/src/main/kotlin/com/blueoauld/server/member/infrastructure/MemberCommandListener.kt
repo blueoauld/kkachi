@@ -29,7 +29,6 @@ class MemberCommandListener(
         const val COMMAND_LOOKUP = "조회"
         const val COMMAND_RESET = "초기화"
 
-        const val OPTION_NICKNAME = "닉네임"
         const val OPTION_MEMBER_ID = "회원아이디"
         const val OPTION_TARGET = "항목"
 
@@ -37,8 +36,8 @@ class MemberCommandListener(
     }
 
     override fun commands(): List<SlashCommandData> = listOf(
-        Commands.slash(COMMAND_LOOKUP, "닉네임으로 회원을 조회합니다.")
-            .addOption(OptionType.STRING, OPTION_NICKNAME, "조회할 회원의 닉네임", true),
+        Commands.slash(COMMAND_LOOKUP, "회원 ID로 회원을 조회합니다.")
+            .addOption(OptionType.INTEGER, OPTION_MEMBER_ID, "조회할 회원 ID", true),
         Commands.slash(COMMAND_RESET, "회원의 특정 항목을 초기화/제재합니다.")
             .addOption(OptionType.INTEGER, OPTION_MEMBER_ID, "초기화할 회원 ID", true)
             .addOptions(targetOption()),
@@ -52,8 +51,8 @@ class MemberCommandListener(
     }
 
     private fun handleLookup(event: SlashCommandInteractionEvent) {
-        val nickname = event.getOption(OPTION_NICKNAME)!!.asString
-        val member = memberService.getMemberDetailByNickname(nickname)
+        val memberId = event.getOption(OPTION_MEMBER_ID)!!.asLong
+        val member = memberService.getMemberDetail(memberId)
 
         event.hook.sendMessageEmbeds(
             infoEmbed(member),

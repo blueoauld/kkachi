@@ -96,8 +96,8 @@ class MemberService(
     }
 
     @Transactional(readOnly = true)
-    fun getMemberDetailByNickname(nickname: String): MemberDetailResponse {
-        val member = memberRepository.findByNickname(nickname) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+    fun getMemberDetail(memberId: Long): MemberDetailResponse {
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
 
         val publicImageUrls = imageUrls(member.id, ImageType.PUBLIC)
         val secretImageUrls = imageUrls(member.id, ImageType.SECRET)
