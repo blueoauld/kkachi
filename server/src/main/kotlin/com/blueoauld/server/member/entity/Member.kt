@@ -23,7 +23,7 @@ class Member(
     val phone: String,
 
     @Column(name = "nickname", length = 10, unique = true, nullable = false)
-    var nickname: String = "닉네임_" + UUID.randomUUID().toString().take(6),
+    var nickname: String = generateDefaultNickname(),
 
     @Column(name = "password", length = 100, nullable = false)
     private val password: String,
@@ -51,6 +51,12 @@ class Member(
     var updatedAt: Instant = Instant.now(),
 ) {
 
+    companion object {
+        private const val SANITIZED_TEXT = "부적절한 내용으로 수정되었습니다."
+
+        fun generateDefaultNickname(): String = "닉네임_" + UUID.randomUUID().toString().take(6)
+    }
+
     fun matchesPassword(rawPassword: String, passwordEncoder: PasswordEncoder): Boolean =
         passwordEncoder.matches(rawPassword, this.password)
 
@@ -68,6 +74,18 @@ class Member(
 
     fun updateComment(comment: String) {
         this.comment = comment
+    }
+
+    fun resetNickname() {
+        this.nickname = generateDefaultNickname()
+    }
+
+    fun sanitizeComment() {
+        this.comment = SANITIZED_TEXT
+    }
+
+    fun sanitizeBio() {
+        this.bio = SANITIZED_TEXT
     }
 
     fun bump() {

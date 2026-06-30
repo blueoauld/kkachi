@@ -79,6 +79,14 @@ class MemberImageService(
             }
     }
 
+    @Transactional
+    fun removeImages(memberId: Long, type: ImageType) {
+        memberImageRepository.findByMemberIdAndType(memberId, type).forEach { image ->
+            memberImageRepository.delete(image)
+            imageStorage.delete(image.objectKey)
+        }
+    }
+
     @Transactional(readOnly = true)
     fun getSecretImages(viewerId: Long, targetId: Long): SecretImageResponse {
         if (viewerId != targetId && !secretImageAccessRepository.existsByOwnerIdAndViewerId(targetId, viewerId)) {

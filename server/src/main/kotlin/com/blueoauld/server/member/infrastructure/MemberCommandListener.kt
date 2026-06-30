@@ -1,6 +1,7 @@
 package com.blueoauld.server.member.infrastructure
 
 import com.blueoauld.server.global.discord.AdminSlashCommandHandler
+import com.blueoauld.server.member.application.MemberResetTarget
 import com.blueoauld.server.member.application.MemberService
 import com.blueoauld.server.member.application.response.MemberDetailResponse
 import com.blueoauld.server.member.entity.type.GenderType
@@ -8,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.Commands
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -25,7 +27,11 @@ class MemberCommandListener(
 
     companion object {
         const val COMMAND_LOOKUP = "조회"
+        const val COMMAND_RESET = "초기화"
+
         const val OPTION_NICKNAME = "닉네임"
+        const val OPTION_MEMBER_ID = "회원아이디"
+        const val OPTION_TARGET = "항목"
 
         private val KST_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Seoul"))
     }
@@ -33,9 +39,19 @@ class MemberCommandListener(
     override fun commands(): List<SlashCommandData> = listOf(
         Commands.slash(COMMAND_LOOKUP, "닉네임으로 회원을 조회합니다.")
             .addOption(OptionType.STRING, OPTION_NICKNAME, "조회할 회원의 닉네임", true),
+        Commands.slash(COMMAND_RESET, "회원의 특정 항목을 초기화/제재합니다.")
+            .addOption(OptionType.INTEGER, OPTION_MEMBER_ID, "초기화할 회원 ID", true)
+            .addOptions(targetOption()),
     )
 
     override fun handle(event: SlashCommandInteractionEvent) {
+        when (event.name) {
+            COMMAND_LOOKUP -> handleLookup(event)
+            COMMAND_RESET -> handleReset(event)
+        }
+    }
+
+    private fun handleLookup(event: SlashCommandInteractionEvent) {
         val nickname = event.getOption(OPTION_NICKNAME)!!.asString
         val member = memberService.getMemberDetailByNickname(nickname)
 
@@ -44,6 +60,19 @@ class MemberCommandListener(
             imageEmbed("공개 사진", member.publicImageUrls),
             imageEmbed("비밀 사진", member.secretImageUrls),
         ).queue()
+    }
+
+    private fun handleReset(event: SlashCommandInteractionEvent) {
+        val memberId = event.getOption(OPTION_MEMBER_ID)!!.asLong
+        val target = MemberResetTarget.valueOf(event.getOption(OPTION_TARGET)!!.asString)
+
+        memberService.reset(memberId, target)
+
+        event.hook.sendMessage("회원(ID: `$memberId`)의 ${target.label} 항목을 초기화했습니다.").queue()
+    }
+
+    private fun targetOption() = OptionData(OptionType.STRING, OPTION_TARGET, "초기화할 항목", true).apply {
+        MemberResetTarget.entries.forEach { addChoice(it.label, it.name) }
     }
 
     private fun infoEmbed(member: MemberDetailResponse) = EmbedBuilder()
@@ -59,8 +88,6 @@ class MemberCommandListener(
         .addField("갱신일", formatKst(member.updatedAt), false)
         .build()
 
-    private fun formatKst(instant: Instant): String = KST_FORMATTER.format(instant)
-
     private fun imageEmbed(title: String, urls: List<String>) = EmbedBuilder()
         .setTitle(title)
         .setDescription(
@@ -71,6 +98,8 @@ class MemberCommandListener(
             },
         )
         .build()
+
+    private fun formatKst(instant: Instant): String = KST_FORMATTER.format(instant)
 
     private fun genderText(gender: GenderType): String = when (gender) {
         GenderType.MALE -> "남자"

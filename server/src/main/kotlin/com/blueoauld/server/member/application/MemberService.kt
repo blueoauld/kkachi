@@ -36,6 +36,7 @@ class MemberService(
     private val favoriteRepository: FavoriteRepository,
     private val blockRepository: BlockRepository,
     private val secretImageAccessRepository: SecretImageAccessRepository,
+    private val memberImageService: MemberImageService,
     private val imageStorage: ImageStorage,
 ) {
 
@@ -79,6 +80,19 @@ class MemberService(
         val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
 
         member.bump()
+    }
+
+    @Transactional
+    fun reset(memberId: Long, target: MemberResetTarget) {
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+
+        when (target) {
+            MemberResetTarget.NICKNAME -> member.resetNickname()
+            MemberResetTarget.COMMENT -> member.sanitizeComment()
+            MemberResetTarget.BIO -> member.sanitizeBio()
+            MemberResetTarget.PUBLIC_IMAGE -> memberImageService.removeImages(memberId, ImageType.PUBLIC)
+            MemberResetTarget.SECRET_IMAGE -> memberImageService.removeImages(memberId, ImageType.SECRET)
+        }
     }
 
     @Transactional(readOnly = true)
