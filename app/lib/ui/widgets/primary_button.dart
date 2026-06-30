@@ -19,9 +19,7 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilledButton(
       onPressed: isLoading ? null : onPressed,
-      style: FilledButton.styleFrom(
-        minimumSize: const Size.fromHeight(52),
-      ),
+      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
       child: isLoading
           ? const SizedBox(
               height: 22,

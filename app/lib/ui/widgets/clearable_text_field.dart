@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// 입력값이 있을 때 우측에 클리어(X) 버튼이 표시되는 입력창.
 ///
@@ -12,6 +13,7 @@ class ClearableTextField extends StatelessWidget {
     this.textInputAction,
     this.obscureText = false,
     this.onSubmitted,
+    this.inputFormatters,
   });
 
   final TextEditingController controller;
@@ -20,6 +22,7 @@ class ClearableTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final bool obscureText;
   final ValueChanged<String>? onSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,7 @@ class ClearableTextField extends StatelessWidget {
           textInputAction: textInputAction,
           obscureText: obscureText,
           onSubmitted: onSubmitted,
+          inputFormatters: inputFormatters,
           decoration: InputDecoration(
             hintText: hintText,
             suffixIcon: value.text.isEmpty

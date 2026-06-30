@@ -24,8 +24,9 @@ class LoginViewModel extends AsyncNotifier<void> {
   }
 }
 
-final loginViewModelProvider =
-    AsyncNotifierProvider<LoginViewModel, void>(LoginViewModel.new);
+final loginViewModelProvider = AsyncNotifierProvider<LoginViewModel, void>(
+  LoginViewModel.new,
+);
 
 /// 로그인 과정에서 발생하는 도메인 예외.
 class LoginException implements Exception {

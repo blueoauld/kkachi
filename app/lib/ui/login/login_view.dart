@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../widgets/clearable_text_field.dart';
 import '../widgets/primary_button.dart';
@@ -36,7 +37,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
   }
 
   void _onSignUpPressed() {
-    // TODO: 회원가입 화면으로 이동 (go_router 라우트 연결 예정)
+    context.push('/signup');
   }
 
   @override
