@@ -47,14 +47,15 @@ export default function MainLayout() {
           tabBarStyle: {
             backgroundColor: background,
             borderTopColor: isDark ? "rgb(40 40 40)" : "rgb(200 200 200)",
-            paddingTop: 4,
+            paddingTop: 2,
+            height: 75,
           },
           sceneStyle: {
             backgroundColor: background,
           },
           tabBarIconStyle: {
             marginTop: 4,
-            marginBottom: 4,
+            marginBottom: 2,
           },
           tabBarActiveTintColor: foreground,
           tabBarInactiveTintColor: isDark
