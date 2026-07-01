@@ -8,8 +8,8 @@ import {
   SquarePen,
   Trophy,
 } from "lucide-react-native";
-import { useState } from "react";
-import { Pressable, useColorScheme, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Pressable, type TextInput, useColorScheme, View } from "react-native";
 
 import { Button, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
@@ -29,6 +29,14 @@ export default function MainLayout() {
   const isDark = colorScheme === "dark";
 
   const [showCommentModal, setShowCommentModal] = useState(false);
+  const commentInputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    if (!showCommentModal) return;
+
+    const timer = setTimeout(() => commentInputRef.current?.focus(), 300);
+    return () => clearTimeout(timer);
+  }, [showCommentModal]);
 
   const background = isDark ? "rgb(10 10 10)" : "rgb(255 255 255)";
   const foreground = isDark ? "rgb(255 255 255)" : "rgb(10 10 10)";
@@ -48,7 +56,7 @@ export default function MainLayout() {
             backgroundColor: background,
             borderTopColor: isDark ? "rgb(40 40 40)" : "rgb(200 200 200)",
             paddingTop: 2,
-            height: 75,
+            height: 80,
           },
           sceneStyle: {
             backgroundColor: background,
@@ -151,13 +159,14 @@ export default function MainLayout() {
         onClose={() => setShowCommentModal(false)}
       >
         <ModalBackdrop />
-        <ModalContent>
+        <ModalContent className="mb-56">
           <ModalHeader>
             <Heading size="lg">코멘트</Heading>
           </ModalHeader>
           <ModalBody>
             <Input>
               <InputField
+                ref={commentInputRef}
                 placeholder="내용 입력"
                 className="text-base"
                 maxLength={100}

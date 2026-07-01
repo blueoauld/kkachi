@@ -27,7 +27,7 @@ export default function ProfileSettingScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <Box className="flex-1">
           <ScrollView
-            contentContainerStyle={{ flexGrow: 1, padding: 24 }}
+            contentContainerStyle={{ flexGrow: 1, padding: 20 }}
             keyboardShouldPersistTaps="handled"
             className="flex-1"
           >
@@ -146,7 +146,7 @@ export default function ProfileSettingScreen() {
             </VStack>
           </ScrollView>
 
-          <Box className="border-t border-border bg-background p-6">
+          <Box className="bg-background p-6">
             <Button variant="default" size="lg" className="w-full py-4">
               <ButtonText className="text-lg font-semibold">확인</ButtonText>
             </Button>
