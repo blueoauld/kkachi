@@ -14,6 +14,9 @@ export default function IndexScreen() {
       <Link href="/(profile)/setting">
         <Text>프로필 설정</Text>
       </Link>
+      <Link href="/(main)/home">
+        <Text>메인</Text>
+      </Link>
     </Box>
   );
 }
