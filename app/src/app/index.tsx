@@ -11,6 +11,9 @@ export default function IndexScreen() {
       <Link href="/(auth)/signup">
         <Text>회원가입</Text>
       </Link>
+      <Link href="/(profile)/setting">
+        <Text>프로필 설정</Text>
+      </Link>
     </Box>
   );
 }

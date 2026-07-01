@@ -23,8 +23,8 @@ export default function SignupScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <Box className="flex-1 p-6">
           <VStack space="lg">
-            <VStack space="sm">
-              <HStack space="sm">
+            <VStack space="md">
+              <HStack space="md">
                 <Input className="flex-1">
                   <InputField
                     type="text"
@@ -50,7 +50,7 @@ export default function SignupScreen() {
                 />
               </Input>
             </VStack>
-            <VStack space="sm">
+            <VStack space="md">
               <Input>
                 <InputField
                   type="password"
@@ -66,7 +66,7 @@ export default function SignupScreen() {
                 />
               </Input>
             </VStack>
-            <HStack space="sm">
+            <HStack space="md">
               <Button variant="secondary" size="lg" className="flex-1 py-2">
                 <ButtonText className="text-lg">남자</ButtonText>
               </Button>
@@ -78,7 +78,9 @@ export default function SignupScreen() {
 
           <Box className="mt-auto">
             <Button variant="default" size="lg" className="w-full py-4">
-              <ButtonText className="text-lg font-semibold">회원가입</ButtonText>
+              <ButtonText className="text-lg font-semibold">
+                회원가입
+              </ButtonText>
             </Button>
           </Box>
         </Box>
