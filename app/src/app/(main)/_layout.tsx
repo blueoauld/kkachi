@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import {
   Bell,
   BellOff,
@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/modal";
 
 export default function MainLayout() {
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -87,7 +88,7 @@ export default function MainLayout() {
               <Pressable
                 hitSlop={8}
                 style={{ paddingHorizontal: 16 }}
-                onPress={() => {}}
+                onPress={() => router.push("/search")}
               >
                 <Search color={foreground} size={24} />
               </Pressable>

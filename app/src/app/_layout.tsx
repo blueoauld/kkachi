@@ -31,6 +31,7 @@ export default function RootLayout() {
           name="(profile)/setting"
           options={{ title: "프로필 설정" }}
         />
+        <Stack.Screen name="search" options={{ title: "검색" }} />
         <Stack.Screen name="(main)" options={{ headerShown: false }} />
       </Stack>
     </GluestackUIProvider>
