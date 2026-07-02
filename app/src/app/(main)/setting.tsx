@@ -84,7 +84,7 @@ export default function SettingScreen() {
         {
           icon: User,
           label: "내 프로필",
-          onPress: () => router.push("/(profile)/setting"),
+          onPress: () => router.push("/(profile)/my"),
         },
       ],
     },
