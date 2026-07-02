@@ -33,6 +33,7 @@ export default function RootLayout() {
         />
         <Stack.Screen name="(profile)/my" options={{ title: "내 프로필" }} />
         <Stack.Screen name="search" options={{ title: "검색" }} />
+        <Stack.Screen name="chat-search" options={{ title: "채팅 검색" }} />
         <Stack.Screen name="liked" options={{ title: "누른 좋아요 목록" }} />
         <Stack.Screen
           name="favorited"

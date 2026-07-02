@@ -26,8 +26,9 @@ import {
   MessageCircle,
   Star,
   User,
+  X,
 } from "lucide-react-native";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Dimensions,
   ScrollView,
@@ -36,6 +37,8 @@ import {
 } from "react-native";
 import ImageViewing from "react-native-image-viewing";
 import Carousel from "react-native-reanimated-carousel";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 type GenderLabel = "남자" | "여자";
 
 type Member = {
@@ -176,6 +179,22 @@ function ActionBarButton({
   );
 }
 
+function ImageViewerHeader({ onRequestClose }: { onRequestClose: () => void }) {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <HStack style={{ paddingTop: insets.top + 8 }} className="justify-end px-2">
+      <Pressable
+        onPress={onRequestClose}
+        hitSlop={16}
+        className="h-11 w-11 items-center justify-center rounded-full bg-black/50"
+      >
+        <Icon as={X} className="text-white w-8 h-8" />
+      </Pressable>
+    </HStack>
+  );
+}
+
 function ActionBar({
   favorited,
   hearted,
@@ -263,9 +282,19 @@ export default function MemberDetailScreen() {
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
   const messageInputRef = useRef<TextInput>(null);
+  const isCarouselSwipingRef = useRef(false);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const foreground = isDark ? "rgb(255 255 255)" : "rgb(10 10 10)";
+  const closeImageViewer = useCallback(() => setImageViewerVisible(false), []);
+  const renderImageViewerHeader = useCallback(
+    () => <ImageViewerHeader onRequestClose={closeImageViewer} />,
+    [closeImageViewer],
+  );
+  const viewerImages = useMemo(
+    () => member.imageUrls.map((uri) => ({ uri })),
+    [member.imageUrls],
+  );
 
   useEffect(() => {
     if (!showMessageModal) return;
@@ -322,8 +351,19 @@ export default function MemberDetailScreen() {
                 height={SCREEN_WIDTH}
                 data={member.imageUrls}
                 onSnapToItem={setActiveIndex}
+                onScrollStart={() => {
+                  isCarouselSwipingRef.current = true;
+                }}
+                onScrollEnd={() => {
+                  isCarouselSwipingRef.current = false;
+                }}
                 renderItem={({ item }) => (
-                  <Pressable onPress={() => setImageViewerVisible(true)}>
+                  <Pressable
+                    onPress={() => {
+                      if (isCarouselSwipingRef.current) return;
+                      setImageViewerVisible(true);
+                    }}
+                  >
                     <Image
                       source={{ uri: item }}
                       style={{ width: "100%", height: "100%" }}
@@ -467,10 +507,11 @@ export default function MemberDetailScreen() {
       </Modal>
 
       <ImageViewing
-        images={member.imageUrls.map((uri) => ({ uri }))}
+        images={viewerImages}
         imageIndex={activeIndex}
         visible={imageViewerVisible}
-        onRequestClose={() => setImageViewerVisible(false)}
+        onRequestClose={closeImageViewer}
+        HeaderComponent={renderImageViewerHeader}
       />
     </>
   );

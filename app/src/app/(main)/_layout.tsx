@@ -138,6 +138,15 @@ export default function MainLayout() {
             tabBarIcon: ({ color, size }) => (
               <MessageCircle color={color} size={size} />
             ),
+            headerLeft: () => (
+              <Pressable
+                hitSlop={8}
+                style={{ paddingHorizontal: 16 }}
+                onPress={() => router.push("/chat-search")}
+              >
+                <Search color={foreground} size={24} />
+              </Pressable>
+            ),
             headerRight: () => (
               <Pressable
                 hitSlop={8}
