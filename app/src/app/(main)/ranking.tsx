@@ -1,10 +1,11 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { FlatList, Pressable } from "react-native";
+import { FlatList } from "react-native";
 
 import { Avatar, AvatarFallbackText } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
 import { HStack } from "@/components/ui/hstack";
+import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 

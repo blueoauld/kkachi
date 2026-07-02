@@ -1,18 +1,14 @@
 import { Search } from "lucide-react-native";
 import { useMemo, useState } from "react";
-import { FlatList, Pressable } from "react-native";
+import { FlatList } from "react-native";
 
 import { Avatar, AvatarFallbackText } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
 import { HStack } from "@/components/ui/hstack";
-import {
-  Input,
-  InputField,
-  InputIcon,
-  InputSlot,
-} from "@/components/ui/input";
+import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { Pressable } from "@/components/ui/pressable";
 
 const DATA = Array.from({ length: 100 }, (_, i) => ({
   id: String(i),
