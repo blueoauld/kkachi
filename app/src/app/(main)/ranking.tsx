@@ -1,11 +1,9 @@
-import { Heart } from "lucide-react-native";
 import { useState } from "react";
 import { FlatList, Pressable } from "react-native";
 
 import { Avatar, AvatarFallbackText } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
 import { HStack } from "@/components/ui/hstack";
-import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 
@@ -47,8 +45,7 @@ export default function RankingScreen() {
           );
         })}
       </HStack>
-      <HStack className="mx-4 mb-2 items-center gap-1.5 rounded-lg bg-muted px-3 py-2">
-        <Icon as={Heart} size="xs" className="text-muted-foreground" />
+      <HStack className="items-center bg-muted px-4 py-2 justify-center">
         <Text className="text-xs text-muted-foreground">
           좋아요가 많은 순서로 정렬됩니다.
         </Text>

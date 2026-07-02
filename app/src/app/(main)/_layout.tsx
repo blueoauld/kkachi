@@ -2,6 +2,7 @@ import { Tabs } from "expo-router";
 import {
   Bell,
   BellOff,
+  Ellipsis,
   House,
   MessageCircle,
   Search,
@@ -166,6 +167,38 @@ export default function MainLayout() {
             title: "설정",
             tabBarIcon: ({ color, size }) => (
               <Settings color={color} size={size} />
+            ),
+            headerRight: () => (
+              <Menu
+                placement="bottom right"
+                offset={8}
+                trigger={({ ...triggerProps }) => (
+                  <Pressable
+                    hitSlop={8}
+                    style={{ paddingHorizontal: 16 }}
+                    {...triggerProps}
+                  >
+                    <Ellipsis color={foreground} size={24} />
+                  </Pressable>
+                )}
+              >
+                <MenuItem
+                  key="logout"
+                  textValue="로그아웃"
+                  onPress={() => console.log("로그아웃")}
+                >
+                  <MenuItemLabel className="text-lg">로그아웃</MenuItemLabel>
+                </MenuItem>
+                <MenuItem
+                  key="withdraw"
+                  textValue="회원탈퇴"
+                  onPress={() => console.log("회원탈퇴")}
+                >
+                  <MenuItemLabel className="text-lg text-destructive">
+                    회원탈퇴
+                  </MenuItemLabel>
+                </MenuItem>
+              </Menu>
             ),
           }}
         />
