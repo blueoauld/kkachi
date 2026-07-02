@@ -261,6 +261,7 @@ export default function MemberDetailScreen() {
   const [hearted, setHearted] = useState(false);
   const [blocked, setBlocked] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
+  const [showBlockModal, setShowBlockModal] = useState(false);
   const messageInputRef = useRef<TextInput>(null);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -392,7 +393,9 @@ export default function MemberDetailScreen() {
         onToggleHearted={() => setHearted((v) => !v)}
         onChat={() => setShowMessageModal(true)}
         onSecretPhoto={() => console.log("비밀사진 요청")}
-        onToggleBlocked={() => setBlocked((v) => !v)}
+        onToggleBlocked={() =>
+          blocked ? setBlocked(false) : setShowBlockModal(true)
+        }
       />
 
       <Modal
@@ -424,6 +427,38 @@ export default function MemberDetailScreen() {
             </Button>
             <Button className="flex-1" onPress={() => {}}>
               <ButtonText className="text-base">보내기</ButtonText>
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={showBlockModal} onClose={() => setShowBlockModal(false)}>
+        <ModalBackdrop />
+        <ModalContent>
+          <ModalHeader>
+            <Heading size="lg">차단</Heading>
+          </ModalHeader>
+          <ModalBody>
+            <Text className="text-base text-foreground">
+              대화 내역이 모두 삭제되며, 서로의 목록에서도 표시되지 않습니다.
+            </Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onPress={() => setShowBlockModal(false)}
+            >
+              <ButtonText className="text-base">닫기</ButtonText>
+            </Button>
+            <Button
+              className="flex-1"
+              onPress={() => {
+                setBlocked(true);
+                setShowBlockModal(false);
+              }}
+            >
+              <ButtonText className="text-base">확인</ButtonText>
             </Button>
           </ModalFooter>
         </ModalContent>
