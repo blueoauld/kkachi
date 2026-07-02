@@ -9,15 +9,30 @@ import {
   Star,
   User,
 } from "lucide-react-native";
-import { useState } from "react";
-import { Dimensions, ScrollView, useColorScheme } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  Dimensions,
+  ScrollView,
+  type TextInput,
+  useColorScheme,
+} from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 
 import { Box } from "@/components/ui/box";
+import { Button, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
 import { Icon } from "@/components/ui/icon";
+import { Input, InputField } from "@/components/ui/input";
 import { Menu, MenuItem, MenuItemLabel } from "@/components/ui/menu";
+import {
+  Modal,
+  ModalBackdrop,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@/components/ui/modal";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
@@ -245,9 +260,18 @@ export default function MemberDetailScreen() {
   const [favorited, setFavorited] = useState(false);
   const [hearted, setHearted] = useState(false);
   const [blocked, setBlocked] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const messageInputRef = useRef<TextInput>(null);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const foreground = isDark ? "rgb(255 255 255)" : "rgb(10 10 10)";
+
+  useEffect(() => {
+    if (!showMessageModal) return;
+
+    const timer = setTimeout(() => messageInputRef.current?.focus(), 200);
+    return () => clearTimeout(timer);
+  }, [showMessageModal]);
 
   return (
     <>
@@ -366,10 +390,44 @@ export default function MemberDetailScreen() {
         secretPhotoCount={member.secretPhotoCount}
         onToggleFavorite={() => setFavorited((v) => !v)}
         onToggleHearted={() => setHearted((v) => !v)}
-        onChat={() => console.log("채팅 요청")}
+        onChat={() => setShowMessageModal(true)}
         onSecretPhoto={() => console.log("비밀사진 요청")}
         onToggleBlocked={() => setBlocked((v) => !v)}
       />
+
+      <Modal
+        isOpen={showMessageModal}
+        onClose={() => setShowMessageModal(false)}
+      >
+        <ModalBackdrop />
+        <ModalContent className="mb-56">
+          <ModalHeader>
+            <Heading size="lg">쪽지</Heading>
+          </ModalHeader>
+          <ModalBody>
+            <Input>
+              <InputField
+                ref={messageInputRef}
+                placeholder="내용 입력 (15P)"
+                className="text-base"
+                maxLength={100}
+              />
+            </Input>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onPress={() => setShowMessageModal(false)}
+            >
+              <ButtonText className="text-base">닫기</ButtonText>
+            </Button>
+            <Button className="flex-1" onPress={() => {}}>
+              <ButtonText className="text-base">보내기</ButtonText>
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
