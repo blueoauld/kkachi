@@ -64,7 +64,7 @@ export default function ChatScreen() {
           paddingHorizontal: 16,
           paddingTop: 8,
           paddingBottom: 16,
-          gap: 4,
+          gap: 8,
         }}
         renderItem={({ item }) => (
           <HStack className="gap-3 items-center">
