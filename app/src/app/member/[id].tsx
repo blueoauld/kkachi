@@ -276,7 +276,9 @@ export default function MemberDetailScreen() {
               <MenuItem
                 key="report"
                 textValue="신고하기"
-                onPress={() => console.log("신고하기")}
+                onPress={() =>
+                  router.push(`/report/${id}?nickname=${member.nickname}`)
+                }
               >
                 <MenuItemLabel className="text-lg text-destructive">
                   신고하기
