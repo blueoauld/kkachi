@@ -1,23 +1,3 @@
-import { Image } from "expo-image";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import {
-  Ban,
-  Ellipsis,
-  Heart,
-  Image as ImageIcon,
-  MessageCircle,
-  Star,
-  User,
-} from "lucide-react-native";
-import { useEffect, useRef, useState } from "react";
-import {
-  Dimensions,
-  ScrollView,
-  type TextInput,
-  useColorScheme,
-} from "react-native";
-import Carousel from "react-native-reanimated-carousel";
-
 import { Box } from "@/components/ui/box";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
@@ -36,9 +16,26 @@ import {
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
-
+import { Image } from "expo-image";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Ban,
+  Ellipsis,
+  Heart,
+  Image as ImageIcon,
+  MessageCircle,
+  Star,
+  User,
+} from "lucide-react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  Dimensions,
+  ScrollView,
+  type TextInput,
+  useColorScheme,
+} from "react-native";
+import ImageViewing from "react-native-image-viewing";
+import Carousel from "react-native-reanimated-carousel";
 type GenderLabel = "남자" | "여자";
 
 type Member = {
@@ -53,6 +50,8 @@ type Member = {
   imageUrls: string[];
   secretPhotoCount: number;
 };
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const MEMBERS: Member[] = [
   {
@@ -257,6 +256,7 @@ export default function MemberDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const member = MEMBERS[Math.abs(Number(id) || 0) % MEMBERS.length];
   const [activeIndex, setActiveIndex] = useState(0);
+  const [imageViewerVisible, setImageViewerVisible] = useState(false);
   const [favorited, setFavorited] = useState(false);
   const [hearted, setHearted] = useState(false);
   const [blocked, setBlocked] = useState(false);
@@ -323,11 +323,13 @@ export default function MemberDetailScreen() {
                 data={member.imageUrls}
                 onSnapToItem={setActiveIndex}
                 renderItem={({ item }) => (
-                  <Image
-                    source={{ uri: item }}
-                    style={{ width: "100%", height: "100%" }}
-                    contentFit="cover"
-                  />
+                  <Pressable onPress={() => setImageViewerVisible(true)}>
+                    <Image
+                      source={{ uri: item }}
+                      style={{ width: "100%", height: "100%" }}
+                      contentFit="cover"
+                    />
+                  </Pressable>
                 )}
               />
               <CarouselDots
@@ -463,6 +465,13 @@ export default function MemberDetailScreen() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <ImageViewing
+        images={member.imageUrls.map((uri) => ({ uri }))}
+        imageIndex={activeIndex}
+        visible={imageViewerVisible}
+        onRequestClose={() => setImageViewerVisible(false)}
+      />
     </>
   );
 }
