@@ -35,6 +35,10 @@ export default function RootLayout() {
         <Stack.Screen name="search" options={{ title: "검색" }} />
         <Stack.Screen name="liked" options={{ title: "누른 좋아요 목록" }} />
         <Stack.Screen
+          name="favorited"
+          options={{ title: "누른 즐겨찾기 목록" }}
+        />
+        <Stack.Screen
           name="public-photos"
           options={{ title: "공개한 비밀 사진 목록" }}
         />
@@ -42,6 +46,10 @@ export default function RootLayout() {
         <Stack.Screen
           name="received-likes"
           options={{ title: "받은 좋아요 목록" }}
+        />
+        <Stack.Screen
+          name="received-favorites"
+          options={{ title: "받은 즐겨찾기 목록" }}
         />
         <Stack.Screen
           name="received-photos"

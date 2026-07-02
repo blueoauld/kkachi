@@ -12,8 +12,10 @@ import {
   type LucideIcon,
   MessageCircleQuestion,
   ShieldCheck,
+  Star,
   Unlock,
   User,
+  UserStar,
 } from "lucide-react-native";
 import { ScrollView } from "react-native";
 
@@ -83,7 +85,7 @@ export default function SettingScreen() {
       rows: [
         {
           icon: User,
-          label: "내 프로필",
+          label: "프로필",
           onPress: () => router.push("/(profile)/my"),
         },
       ],
@@ -95,6 +97,11 @@ export default function SettingScreen() {
           icon: Heart,
           label: "누른 좋아요 목록",
           onPress: () => router.push("/liked"),
+        },
+        {
+          icon: Star,
+          label: "누른 즐겨찾기 목록",
+          onPress: () => router.push("/favorited"),
         },
         {
           icon: Unlock,
@@ -115,6 +122,11 @@ export default function SettingScreen() {
           icon: HeartHandshake,
           label: "받은 좋아요 목록",
           onPress: () => router.push("/received-likes"),
+        },
+        {
+          icon: UserStar,
+          label: "받은 즐겨찾기 목록",
+          onPress: () => router.push("/received-favorites"),
         },
         {
           icon: Eye,

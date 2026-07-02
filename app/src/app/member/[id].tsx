@@ -36,6 +36,7 @@ type Member = {
   comment: string;
   bio: string;
   imageUrls: string[];
+  secretPhotoCount: number;
 };
 
 const MEMBERS: Member[] = [
@@ -53,6 +54,7 @@ const MEMBERS: Member[] = [
       "https://picsum.photos/seed/kkachi-1-2/800/1000",
       "https://picsum.photos/seed/kkachi-1-3/800/1000",
     ],
+    secretPhotoCount: 3,
   },
   {
     nickname: "서준",
@@ -68,6 +70,7 @@ const MEMBERS: Member[] = [
       // "https://picsum.photos/seed/kkachi-2-1/800/1000",
       // "https://picsum.photos/seed/kkachi-2-2/800/1000",
     ],
+    secretPhotoCount: 0,
   },
   {
     nickname: "하은",
@@ -84,6 +87,7 @@ const MEMBERS: Member[] = [
       // "https://picsum.photos/seed/kkachi-3-3/800/1000",
       // "https://picsum.photos/seed/kkachi-3-4/800/1000",
     ],
+    secretPhotoCount: 5,
   },
   {
     nickname: "도윤",
@@ -98,6 +102,7 @@ const MEMBERS: Member[] = [
       // "https://picsum.photos/seed/kkachi-4-1/800/1000",
       // "https://picsum.photos/seed/kkachi-4-2/800/1000",
     ],
+    secretPhotoCount: 1,
   },
 ];
 
@@ -129,19 +134,30 @@ function ActionBarButton({
   label,
   active,
   activeClassName,
+  badgeCount,
   onPress,
 }: {
   icon: typeof Star;
   label: string;
   active: boolean;
   activeClassName: string;
+  badgeCount?: number;
   onPress: () => void;
 }) {
   const colorClassName = active ? activeClassName : "text-muted-foreground";
 
   return (
     <Pressable onPress={onPress} className="flex-1 items-center">
-      <Icon as={icon} size="lg" className={`${colorClassName} w-8 h-8`} />
+      <Box className="relative">
+        <Icon as={icon} size="lg" className={`${colorClassName} w-8 h-8`} />
+        {badgeCount !== undefined && (
+          <Box className="absolute -right-1 -top-1 h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1">
+            <Text className="text-[10px] font-bold leading-none text-white">
+              {badgeCount}
+            </Text>
+          </Box>
+        )}
+      </Box>
     </Pressable>
   );
 }
@@ -150,6 +166,7 @@ function ActionBar({
   favorited,
   hearted,
   blocked,
+  secretPhotoCount,
   onToggleFavorite,
   onToggleHearted,
   onChat,
@@ -159,6 +176,7 @@ function ActionBar({
   favorited: boolean;
   hearted: boolean;
   blocked: boolean;
+  secretPhotoCount: number;
   onToggleFavorite: () => void;
   onToggleHearted: () => void;
   onChat: () => void;
@@ -205,6 +223,7 @@ function ActionBar({
         label="비밀사진"
         active={false}
         activeClassName=""
+        badgeCount={secretPhotoCount}
         onPress={onSecretPhoto}
       />
       <ActionBarButton
@@ -342,6 +361,7 @@ export default function MemberDetailScreen() {
         favorited={favorited}
         hearted={hearted}
         blocked={blocked}
+        secretPhotoCount={member.secretPhotoCount}
         onToggleFavorite={() => setFavorited((v) => !v)}
         onToggleHearted={() => setHearted((v) => !v)}
         onChat={() => console.log("채팅 요청")}
