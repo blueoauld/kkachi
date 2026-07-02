@@ -1,5 +1,7 @@
 import { Tabs } from "expo-router";
 import {
+  Bell,
+  BellOff,
   House,
   MessageCircle,
   Search,
@@ -30,11 +32,13 @@ export default function MainLayout() {
 
   const [showCommentModal, setShowCommentModal] = useState(false);
   const commentInputRef = useRef<TextInput>(null);
+  const [chatNotificationsEnabled, setChatNotificationsEnabled] =
+    useState(true);
 
   useEffect(() => {
     if (!showCommentModal) return;
 
-    const timer = setTimeout(() => commentInputRef.current?.focus(), 300);
+    const timer = setTimeout(() => commentInputRef.current?.focus(), 200);
     return () => clearTimeout(timer);
   }, [showCommentModal]);
 
@@ -131,6 +135,19 @@ export default function MainLayout() {
             title: "채팅",
             tabBarIcon: ({ color, size }) => (
               <MessageCircle color={color} size={size} />
+            ),
+            headerRight: () => (
+              <Pressable
+                hitSlop={8}
+                style={{ paddingHorizontal: 16 }}
+                onPress={() => setChatNotificationsEnabled((prev) => !prev)}
+              >
+                {chatNotificationsEnabled ? (
+                  <Bell color={foreground} size={24} />
+                ) : (
+                  <BellOff color={foreground} size={24} />
+                )}
+              </Pressable>
             ),
           }}
         />
