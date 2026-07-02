@@ -227,7 +227,6 @@ export default function MainLayout() {
           <ModalFooter>
             <Button
               variant="outline"
-              action="secondary"
               className="flex-1"
               onPress={() => setShowCommentModal(false)}
             >

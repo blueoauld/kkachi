@@ -92,20 +92,19 @@ const InputSlot = React.forwardRef<
 type IInputFieldProps = React.ComponentProps<typeof UIInput.Input> &
   VariantProps<typeof inputFieldStyle> & { className?: string };
 
-const InputField = React.forwardRef<
-  React.ComponentRef<typeof UIInput.Input>,
-  IInputFieldProps
->(function InputField({ className, ...props }, ref) {
-  return (
-    <UIInput.Input
-      ref={ref}
-      {...props}
-      className={inputFieldStyle({
-        class: className,
-      })}
-    />
-  );
-});
+const InputField = React.forwardRef<TextInput, IInputFieldProps>(
+  function InputField({ className, ...props }, ref) {
+    return (
+      <UIInput.Input
+        ref={ref as React.Ref<never>}
+        {...props}
+        className={inputFieldStyle({
+          class: className,
+        })}
+      />
+    );
+  }
+);
 
 Input.displayName = 'Input';
 InputIcon.displayName = 'InputIcon';
