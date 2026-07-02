@@ -3,7 +3,6 @@ import {
   Ban,
   Bug,
   CalendarCheck,
-  ChevronRight,
   Coins,
   Eye,
   FileText,
@@ -14,7 +13,7 @@ import {
   MessageCircleQuestion,
   ShieldCheck,
   Unlock,
-  User,
+  User
 } from "lucide-react-native";
 import { ScrollView } from "react-native";
 
@@ -45,14 +44,13 @@ function SettingItem({
     <Pressable
       onPress={onPress}
       className={`flex-row items-center gap-3 px-4 py-3 ${
-        isLast ? "" : "border-b border-border"
+        isLast ? "" : "border-border"
       }`}
     >
       <Box className="h-9 w-9 items-center justify-center rounded-xl bg-secondary">
         <Icon as={icon} size="sm" className="text-foreground" />
       </Box>
       <Text className="flex-1 text-base text-foreground">{label}</Text>
-      <Icon as={ChevronRight} size="sm" className="text-muted-foreground" />
     </Pressable>
   );
 }
@@ -93,16 +91,36 @@ export default function SettingScreen() {
     {
       title: "내 활동",
       rows: [
-        { icon: Heart, label: "누른 좋아요 목록" },
-        { icon: Unlock, label: "공개한 비밀 사진 목록" },
-        { icon: Ban, label: "차단 목록" },
+        {
+          icon: Heart,
+          label: "누른 좋아요 목록",
+          onPress: () => router.push("/liked"),
+        },
+        {
+          icon: Unlock,
+          label: "공개한 비밀 사진 목록",
+          onPress: () => router.push("/public-photos"),
+        },
+        {
+          icon: Ban,
+          label: "차단 목록",
+          onPress: () => router.push("/blocked"),
+        },
       ],
     },
     {
       title: "받은 관심",
       rows: [
-        { icon: HeartHandshake, label: "받은 좋아요 목록" },
-        { icon: Eye, label: "공개된 비밀 사진 목록" },
+        {
+          icon: HeartHandshake,
+          label: "받은 좋아요 목록",
+          onPress: () => router.push("/received-likes"),
+        },
+        {
+          icon: Eye,
+          label: "공개된 비밀 사진 목록",
+          onPress: () => router.push("/received-photos"),
+        },
       ],
     },
     {

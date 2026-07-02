@@ -32,6 +32,20 @@ export default function RootLayout() {
           options={{ title: "프로필 설정" }}
         />
         <Stack.Screen name="search" options={{ title: "검색" }} />
+        <Stack.Screen name="liked" options={{ title: "누른 좋아요 목록" }} />
+        <Stack.Screen
+          name="public-photos"
+          options={{ title: "공개한 비밀 사진 목록" }}
+        />
+        <Stack.Screen name="blocked" options={{ title: "차단 목록" }} />
+        <Stack.Screen
+          name="received-likes"
+          options={{ title: "받은 좋아요 목록" }}
+        />
+        <Stack.Screen
+          name="received-photos"
+          options={{ title: "공개된 비밀 사진 목록" }}
+        />
         <Stack.Screen name="(main)" options={{ headerShown: false }} />
       </Stack>
     </GluestackUIProvider>
