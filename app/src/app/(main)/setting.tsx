@@ -13,7 +13,7 @@ import {
   MessageCircleQuestion,
   ShieldCheck,
   Unlock,
-  User
+  User,
 } from "lucide-react-native";
 import { ScrollView } from "react-native";
 
@@ -126,7 +126,11 @@ export default function SettingScreen() {
     {
       title: "포인트",
       rows: [
-        { icon: Coins, label: "포인트 내역" },
+        {
+          icon: Coins,
+          label: "포인트 내역",
+          onPress: () => router.push("/points"),
+        },
         { icon: CalendarCheck, label: "출석 체크" },
         { icon: Gift, label: "광고 보상" },
       ],

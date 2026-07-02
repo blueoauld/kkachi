@@ -46,6 +46,7 @@ export default function RootLayout() {
           name="received-photos"
           options={{ title: "공개된 비밀 사진 목록" }}
         />
+        <Stack.Screen name="points" options={{ title: "포인트 내역" }} />
         <Stack.Screen name="(main)" options={{ headerShown: false }} />
       </Stack>
     </GluestackUIProvider>
