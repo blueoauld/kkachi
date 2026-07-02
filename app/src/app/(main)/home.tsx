@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { FlatList, Pressable, RefreshControl } from "react-native";
 
@@ -18,6 +19,7 @@ const DATA = Array.from({ length: 100 }, (_, i) => ({
 }));
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [tab, setTab] = useState("recent");
 
@@ -63,31 +65,33 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         renderItem={({ item }) => (
-          <HStack className="gap-3 items-center">
-            <Avatar className="h-16 w-16">
-              <AvatarFallbackText className="text-base">
-                {item.title}
-              </AvatarFallbackText>
-            </Avatar>
-            <VStack className="flex-1">
-              <HStack className="items-end justify-between">
-                <Text className="text-lg font-semibold">{item.title}</Text>
-                <Text className="text-xs text-muted-foreground">방금전</Text>
-              </HStack>
-              <Text className="text-sm text-muted-foreground">
-                여자 · 20살 · ♥ 100
-              </Text>
-              <HStack className="items-end justify-between gap-2">
-                <Text
-                  numberOfLines={2}
-                  className="flex-1 text-sm text-muted-foreground"
-                >
-                  안녕하세요
+          <Pressable onPress={() => router.push(`/member/${item.id}`)}>
+            <HStack className="gap-3 items-center">
+              <Avatar className="h-16 w-16">
+                <AvatarFallbackText className="text-base">
+                  {item.title}
+                </AvatarFallbackText>
+              </Avatar>
+              <VStack className="flex-1">
+                <HStack className="items-end justify-between">
+                  <Text className="text-lg font-semibold">{item.title}</Text>
+                  <Text className="text-xs text-muted-foreground">방금전</Text>
+                </HStack>
+                <Text className="text-sm text-muted-foreground">
+                  여자 · 20살 · ♥ 100
                 </Text>
-                <Text className="text-xs text-muted-foreground">0.3km</Text>
-              </HStack>
-            </VStack>
-          </HStack>
+                <HStack className="items-end justify-between gap-2">
+                  <Text
+                    numberOfLines={2}
+                    className="flex-1 text-sm text-muted-foreground"
+                  >
+                    안녕하세요
+                  </Text>
+                  <Text className="text-xs text-muted-foreground">0.3km</Text>
+                </HStack>
+              </VStack>
+            </HStack>
+          </Pressable>
         )}
       />
     </Box>

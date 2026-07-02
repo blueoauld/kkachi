@@ -1,6 +1,7 @@
+import { useRouter } from "expo-router";
 import { Search } from "lucide-react-native";
 import { useMemo, useState } from "react";
-import { FlatList } from "react-native";
+import { FlatList, Pressable } from "react-native";
 
 import { Avatar, AvatarFallbackText } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
@@ -15,6 +16,7 @@ const DATA = Array.from({ length: 100 }, (_, i) => ({
 }));
 
 export default function SearchScreen() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
 
   const results = useMemo(
@@ -47,22 +49,27 @@ export default function SearchScreen() {
           gap: 4,
         }}
         renderItem={({ item }) => (
-          <HStack className="gap-3 items-center">
-            <Avatar className="h-16 w-16">
-              <AvatarFallbackText className="text-base">
-                {item.title}
-              </AvatarFallbackText>
-            </Avatar>
-            <VStack className="flex-1">
-              <Text className="text-lg font-semibold">{item.title}</Text>
-              <Text className="text-sm text-muted-foreground">
-                여자 · 20살 · ♥ 100
-              </Text>
-              <Text numberOfLines={2} className="text-sm text-muted-foreground">
-                안녕하세요
-              </Text>
-            </VStack>
-          </HStack>
+          <Pressable onPress={() => router.push(`/member/${item.id}`)}>
+            <HStack className="gap-3 items-center">
+              <Avatar className="h-16 w-16">
+                <AvatarFallbackText className="text-base">
+                  {item.title}
+                </AvatarFallbackText>
+              </Avatar>
+              <VStack className="flex-1">
+                <Text className="text-lg font-semibold">{item.title}</Text>
+                <Text className="text-sm text-muted-foreground">
+                  여자 · 20살 · ♥ 100
+                </Text>
+                <Text
+                  numberOfLines={2}
+                  className="text-sm text-muted-foreground"
+                >
+                  안녕하세요
+                </Text>
+              </VStack>
+            </HStack>
+          </Pressable>
         )}
       />
     </Box>
