@@ -48,7 +48,7 @@ export default function RankingScreen() {
         })}
       </HStack>
       <HStack className="items-center bg-muted px-4 py-2 justify-center">
-        <Text className="text-xs text-muted-foreground">
+        <Text className="text-xs text-muted-foreground font-semibold">
           좋아요가 많은 순서로 정렬됩니다.
         </Text>
       </HStack>
